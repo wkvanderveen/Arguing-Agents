@@ -1,3 +1,5 @@
+"""docstring placeholder"""
+
 class Agent():
     """docstring for Agent"""
     def __init__(self, name, beliefs, desires, intentions, goals):
