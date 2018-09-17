@@ -1,6 +1,6 @@
 """docstring placeholder"""
 
-from agent import Agent
+from agent.agent import Agent
 
 class System():
     """docstring for System"""

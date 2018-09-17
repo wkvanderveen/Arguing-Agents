@@ -1,7 +1,7 @@
 """Docstring for main.py"""
 
 from system import System
-from message import Message
+from message.message import Message
 
 SYSTEM = System()
 
