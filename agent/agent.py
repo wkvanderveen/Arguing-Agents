@@ -1,4 +1,6 @@
 """docstring placeholder"""
+from message.message import RequestMessage
+
 
 class Agent():
     """docstring for Agent"""
@@ -9,6 +11,7 @@ class Agent():
         self.intentions = intentions
         self.goals = goals
         self.outgoing_messages = []
+        self.incoming_messages = []
 
         print("Agent '{}' initialized.\n".format(self.name))
 
@@ -21,15 +24,27 @@ class Agent():
         print("\t- Intentions:\t{}".format(self.intentions))
         print("\t- Goals:\t{}\n".format(self.goals))
 
-    def send_message(self, recipient):
-        """Send all messages in the outgoing message list."""
-        for message in self.outgoing_messages:
-            message.sender = self.name
-            message.recipient = recipient
-        return self.outgoing_messages
 
-    def receive_message(self, message):
-        """Parse and process incoming messages."""
-        message.recipient = self.name
-        print("Agent '{0}' has just received a {1}.\n".format(
-            message.recipient, message.message_type))
+    def generate_message(self,time,type_of_message,recipient):
+        msg=RequestMessage(time=time,
+                           sender=self,
+                           recipient = recipient)
+        self.outgoing_messages.append(msg)
+
+    def send_messages(self):
+        messages_sent=0
+        for message in self.outgoing_messages:
+            message.on_send()
+            self.outgoing_messages.remove(message)
+            message.recipient.incoming_messages.append(message)
+            messages_sent+=1
+
+        return messages_sent
+
+    def receive_messages(self):
+        messages_received=0
+        for message in self.incoming_messages:
+            message.on_receive()
+            self.incoming_messages.remove(message)
+            messages_received+=1
+        return messages_received

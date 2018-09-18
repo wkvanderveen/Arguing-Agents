@@ -1,7 +1,7 @@
 """Docstring for main.py"""
 
 from system.system import System
-from message.message import Message
+from message.message import RequestMessage
 
 SYSTEM = System()
 
@@ -25,9 +25,7 @@ SYSTEM.create_agent("management",
 
 SYSTEM.advance()
 
-SYSTEM.agents["union"].outgoing_messages.append(Message(time=SYSTEM.time,
-                                                        message_type="Request",
-                                                        sender="union"))
+SYSTEM.agents["union"].generate_message(SYSTEM.time+1,'REQUEST',SYSTEM.agents["management"])
 
 SYSTEM.advance()
 

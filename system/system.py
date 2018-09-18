@@ -12,24 +12,27 @@ class System():
 
     def create_agent(self, name, beliefs, desires, intentions, goals):
         """Create a new Agent in the system."""
-        self.agents[name] = Agent(name,
-                                  beliefs,
-                                  desires,
-                                  intentions,
-                                  goals)
+        new_agent=Agent(name,
+                    beliefs,
+                    desires,
+                    intentions,
+                    goals)
+        self.agents[name]=new_agent
 
     def advance(self):
         """Advance the time by a value of 1."""
         self.time += 1
-        message_store = []
-        for name, agent in self.agents.items():
-            message_store.extend(agent.send_message(name))
-            agent.outgoing_messages = []
-        for message in message_store:
-            self.agents[message.recipient].receive_message(message)
         print("Updating system...")
         print("> Time is now {}".format(self.time))
-        print("> Messages transferred: {}\n".format(len(message_store)))
+        messages_sent = 0
+        messages_received = 0
+        for name,agent in self.agents.items():
+            messages_sent+=agent.send_messages()
+
+        for name,agent in self.agents.items():
+            messages_received+=agent.receive_messages()
+
+        print("> Messages Sent: {}, Messages Received {}\n".format(messages_sent,messages_received))
 
 
 
