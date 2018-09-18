@@ -1,5 +1,5 @@
 """docstring placeholder"""
-from message.message import RequestMessage
+from message.message import *
 
 
 class Agent():
@@ -24,27 +24,46 @@ class Agent():
         print("\t- Intentions:\t{}".format(self.intentions))
         print("\t- Goals:\t{}\n".format(self.goals))
 
+    def generate_message(self, time, type_of_message, recipient,
+            sentence, response_msg_type='UNKNOWN'):
 
-    def generate_message(self,time,type_of_message,recipient):
-        msg=RequestMessage(time=time,
-                           sender=self,
-                           recipient = recipient)
+        if type_of_message == 'REQUEST':
+            msg = RequestMessage(time=time,
+                                 sender=self,
+                                 recipient=recipient,
+                                 sentence=sentence)
+        elif type_of_message == 'RESPONSE':
+            msg = ResponseMessage(time=time,
+                                  sender=self,
+                                  recipient=recipient,
+                                  response_msg_type=response_msg_type)
+        elif type_of_message == 'DECLARATION':
+            msg = DeclarationMessage(time=time,
+                                     sender=self,
+                                     recipient=recipient)
+        else:
+            raise ValueError("Incorrect message type ({})".format(
+                type_of_message))
+
         self.outgoing_messages.append(msg)
 
     def send_messages(self):
-        messages_sent=0
+        messages_sent = 0
+
         for message in self.outgoing_messages:
             message.on_send()
             self.outgoing_messages.remove(message)
             message.recipient.incoming_messages.append(message)
-            messages_sent+=1
+            messages_sent += 1
 
         return messages_sent
 
     def receive_messages(self):
-        messages_received=0
+        messages_received = 0
+
         for message in self.incoming_messages:
             message.on_receive()
             self.incoming_messages.remove(message)
-            messages_received+=1
+            messages_received += 1
+
         return messages_received
