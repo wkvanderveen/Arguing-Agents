@@ -4,9 +4,12 @@ DO, it means agent has done constant.
 Capable , it means agent is capable to do whatever is defined in the constant
 
 Predicate is a wff, which means it is a type of sentence.
+Definititon:
+[r, P(x0, . . .,xn) is a wff (read as: P(x0, . .,xn) is true at time t).
 '''
 
-class Predicate():
+from wff.wff import WFF
+class Predicate(WFF):
 
     def __init__(self,time, agent, constant = None, term = None, **kwargs):
         self.time = time
