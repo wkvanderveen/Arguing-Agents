@@ -32,10 +32,17 @@ class RequestMessage(BaseMessage):
         print("Message ({}) initialized.\n".format(self.message_type))
 
     def on_receive(self):
-        print("Message of type {} is received at {} ".format(self.message_type, self.time))
+        print("Message of type {} is received at {} , Sent By: {}, Received By: {} ".format(self.message_type,
+                                                                                            self.time,
+                                                                                            self.sender.name,
+                                                                                            self.recipient.name))
 
     def on_send(self):
-        print("Message of type {0} is sent at {1} ".format(self.message_type, self.time))
+        print("Message of type {} is sent at {} , Sent By: {}, Received By: {} ".format(self.message_type,
+                                                                                        self.time,
+                                                                                        self.sender.name,
+                                                                                        self.recipient.name
+                                                                                        ))
 
 
 
@@ -49,10 +56,18 @@ class ResponseMessage(BaseMessage):
         print("Message ({}) initialized.\n".format(self.message_type))
 
     def on_receive(self):
-        print("Message of type {} is received at {} ".format(self.message_type, self.time))
+        print("Message of type {} is received at {} , Sent By: {}, Received By: {}".format(self.message_type,
+                                                                                           self.time,
+                                                                                           self.sender.name,
+                                                                                           self.recipient.name
+                                                                                           ))
 
     def on_send(self):
-        print("Message of type {} is sent at {} ".format(self.message_type, self.time))
+        print("Message of type {} is sent at {} , Sent By: {}, Received By: {}".format(self.message_type,
+                                                                                       self.time,
+                                                                                       self.sender.name,
+                                                                                       self.recipient.name
+                                                                                       ))
 
 
 
@@ -65,7 +80,15 @@ class DeclarationMessage(BaseMessage):
 
 
     def on_receive(self):
-        print("Message of type {} is received at {} ".format(self.message_type, self.time))
+        print("Message of type {} is received at {} , Sent By: {}, Received By: {}".format(self.message_type,
+                                                                                           self.time,
+                                                                                           self.sender.name,
+                                                                                           self.recipient.name
+                                                                                           ))
 
     def on_send(self):
-        print("Message of type {} is sent at {} ".format(self.message_type, self.time))
+        print("Message of type {} is sent at {} , Sent By: {}, Received By: {}".format(self.message_type,
+                                                                                       self.time,
+                                                                                       self.sender.name,
+                                                                                       self.recipient.name
+                                                                                       ))
