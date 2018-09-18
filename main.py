@@ -18,31 +18,27 @@ SYSTEM.create_agent(name="Bob",
                     intentions=[],
                     goals=[])
 
-mywff = Wff(wff_type='term_compare', terms=[2, 5])
-print(mywff.convert_to_string())
+# Construct message from page 7
+mysentence = Wff(wff_type='predicate',
+                 times=["t1"],
+                 agents=[SYSTEM.agents["Bob"]],
+                 predicate=['Do', "let.use.printer"])
+
+arg_pre_neg = Wff(wff_type='not', wffs=[mysentence])
+
+arg_cons = Wff(wff_type='predicate',
+               times=["t2"],
+               agents=[SYSTEM.agents["Alice"]],
+               predicate=['Do', "break.printer"])
+
+myargument = Wff(wff_type='implies', wffs=[arg_pre_neg, arg_cons])
 
 # Alice sends a Request to Bob
 SYSTEM.agents["Alice"].generate_message(time=SYSTEM.time,
                                         type_of_message='REQUEST',
                                         recipient=SYSTEM.agents["Bob"],
-                                        sentence=mywff)
-
-SYSTEM.agents["Alice"].print_info()
-
-
-mypredwff = Wff(wff_type='predicate', times=[2], predicate=['P', ['x1', 'x2', 'x3']])
-print(mypredwff.convert_to_string())
+                                        sentence=mysentence,
+                                        argument=myargument)
 
 
-mynotwff = Wff(wff_type='not', wffs=[mypredwff])
-print(mynotwff.convert_to_string())
-
-myexistswff = Wff(wff_type='exists', wffs=[mynotwff], terms=['x'])
-print(myexistswff.convert_to_string())
-
-mymessagewff = Wff(wff_type='with_message',
-                   times=[3],
-                   send_receive='Send',
-                   agents=[SYSTEM.agents["Alice"], SYSTEM.agents["Bob"]],
-                   message=SYSTEM.agents["Alice"].outgoing_messages[0])
-print(mymessagewff.convert_to_string())
+print(SYSTEM.agents["Alice"].outgoing_messages[0].convert_to_string())

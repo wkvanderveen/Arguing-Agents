@@ -25,22 +25,26 @@ class Agent():
         print("\t- Goals:\t{}\n".format(self.goals))
 
     def generate_message(self, time, type_of_message, recipient,
-            sentence, response_msg_type='UNKNOWN'):
+            sentence, argument=None, response_msg_type='UNKNOWN'):
 
         if type_of_message == 'REQUEST':
             msg = RequestMessage(time=time,
                                  sender=self,
                                  recipient=recipient,
-                                 sentence=sentence)
+                                 sentence=sentence,
+                                 argument=argument)
         elif type_of_message == 'RESPONSE':
             msg = ResponseMessage(time=time,
                                   sender=self,
                                   recipient=recipient,
-                                  response_msg_type=response_msg_type)
+                                  response_msg_type=response_msg_type,
+                                  sentence=sentence,
+                                  argument=argument)
         elif type_of_message == 'DECLARATION':
             msg = DeclarationMessage(time=time,
                                      sender=self,
-                                     recipient=recipient)
+                                     recipient=recipient,
+                                     sentence=sentence)
         else:
             raise ValueError("Incorrect message type ({})".format(
                 type_of_message))

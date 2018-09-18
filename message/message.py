@@ -30,7 +30,11 @@ class RequestMessage(BaseMessage):
         self.sentence = sentence
         self.argument = argument
 
-        print("Message ({}) initialized.\n".format(self.message_type))
+        arg_info = "" if argument is None else \
+            " with argument {}".format(self.argument.convert_to_string())
+
+        print("Request initialized: {0}{1}.\n".format(
+            self.sentence.convert_to_string(), arg_info))
 
     def on_send(self):
         print("Message of type {0} is sent at {1}".format(
@@ -58,7 +62,11 @@ class ResponseMessage(BaseMessage):
         self.sentence = sentence
         self.argument = argument
 
-        print("Message ({}) initialized.\n".format(self.message_type))
+        arg_info = "" if argument is None else \
+            " with argument {}".format(self.argument.convert_to_string())
+
+        print("Response initialized: {0}{1}.\n".format(
+            self.sentence.convert_to_string(), arg_info))
 
     def on_send(self):
         print("Message of type {0} is sent at {1}".format(
@@ -69,7 +77,7 @@ class ResponseMessage(BaseMessage):
             self.message_type, self.time))
 
     def convert_to_string(self):
-        if argument == None:
+        if self.argument == None:
             if response_msg_type == 'ACCEPT':
                 return "Accept({0})".format(self.sentence.convert_to_string())
             elif response_msg_type == 'REJECT':
@@ -77,11 +85,11 @@ class ResponseMessage(BaseMessage):
             else:
                 return "Response({0})".format(self.sentence.convert_to_string())
         else:
-            if response_msg_type == 'ACCEPT':
+            if self.response_msg_type == 'ACCEPT':
                 return "Accept({0}, {1})"\
                     .format(self.sentence.convert_to_string(),
                             self.argument.convert_to_string())
-            elif response_msg_type == 'REJECT':
+            elif self.response_msg_type == 'REJECT':
                 return "Reject({0}, {1})"\
                     .format(self.sentence.convert_to_string(),
                             self.argument.convert_to_string())
@@ -97,7 +105,8 @@ class DeclarationMessage(BaseMessage):
         self.message_type = 'DECLARATION'
         self.sentence = sentence
 
-        print("Message ({}) initialized.\n".format(self.message_type))
+        print("Declaration initialized: {}.\n".format(
+            self.sentence.convert_to_string()))
 
     def on_send(self):
         print("Message of type {0} is sent at {1}".format(
@@ -107,5 +116,5 @@ class DeclarationMessage(BaseMessage):
         print("Message of type {0} is received at {1}\n".format(
             self.message_type, self.time))
 
-    def convert_to_string(self, sentence, argument=None):
-        return "Declaration({0})".format(sentence.convert_to_string())
+    def convert_to_string(self):
+        return "Declaration({0})".format(self.sentence.convert_to_string())

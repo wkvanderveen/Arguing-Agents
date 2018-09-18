@@ -18,7 +18,7 @@ class Wff():
         self.send_receive = send_receive
 
 
-    def convert_to_string(self, print_verbose=False):
+    def convert_to_string(self):
         # Detect type of wff
         if self.wff_type == 'time_compare':
             return "{0} < {1}".format(self.times[0], self.times[1])
@@ -27,6 +27,11 @@ class Wff():
             return "{0} = {1}".format(self.terms[0], self.terms[1])
 
         if self.wff_type == 'predicate':
+            if self.predicate[0] in ['Do', 'Capable']:
+                return "[{0}, {1}({2}, {3})]".format(self.times[0],
+                                                     self.predicate[0],
+                                                     self.agents[0].name,
+                                                     self.predicate[1])
             return "[{0}, {1}({2})]".format(self.times[0],
                                             self.predicate[0],
                                             ','.join(self.predicate[1]))
