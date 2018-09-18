@@ -11,8 +11,8 @@ SYSTEM.create_agent("union",
                     [],
                     [],
                     [],
-                    [(30, ("wage.increase", True)),
-                     (None, ("unemployment", False))]
+                    [(30, ("increase.wage", True)),
+                     (None, ("less.unemployment", False))]
                    )
 
 SYSTEM.advance()
@@ -21,7 +21,7 @@ SYSTEM.create_agent("management",
                     [],
                     [],
                     [],
-                    [(None, ("save", True))])
+                    [(None, ("minimum.total.wage", True))])
 
 SYSTEM.advance()
 
