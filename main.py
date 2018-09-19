@@ -5,6 +5,8 @@ from message.message import RequestMessage
 from wff.wff import Wff
 SYSTEM = System()
 
+
+
 # Create agents 'Alice' and 'Bob'
 SYSTEM.create_agent(name="Alice",
                     beliefs=[],
@@ -18,27 +20,32 @@ SYSTEM.create_agent(name="Bob",
                     intentions=[],
                     goals=[])
 
-# Construct message from page 7
-mysentence = Wff(wff_type='predicate',
-                 times=["t1"],
-                 agents=[SYSTEM.agents["Bob"]],
-                 predicate=['Do', "let.use.printer"])
+alices_goal_friends = Wff(wff_type='predicate',
+                          times=[2],
+                          predicate=['Do', "be.friends"],
+                          agents=SYSTEM.agents["Bob"],
+                          )
+alices_goal = Wff(wff_type='predicate',
+                  times=[0],
+                  predicate=['Goal'],
+                  agents=SYSTEM.agents["Alice"],
+                  wffs=[alices_goal_friends])
 
-arg_pre_neg = Wff(wff_type='not', wffs=[mysentence])
+alices_belief_let_use_printer = Wff(wff_type='predicate',
+                                    times=[0],
+                                    predicate=['Do', "let.use.printer"],
+                                    agents=SYSTEM.agents["Alice"])
 
-arg_cons = Wff(wff_type='predicate',
-               times=["t2"],
-               agents=[SYSTEM.agents["Alice"]],
-               predicate=['Do', "break.printer"])
+alices_belief_implies = Wff(wff_type='implies',
+                            wffs=[alices_belief_let_use_printer,
+                                  alices_goal_friends])
 
-myargument = Wff(wff_type='implies', wffs=[arg_pre_neg, arg_cons])
+alices_belief = Wff(wff_type='predicate',
+                    times=[0],
+                    predicate=['Bel'],
+                    agents=SYSTEM.agents["Alice"],
+                    wffs=[alices_belief_implies])
 
-# Alice sends a Request to Bob
-SYSTEM.agents["Alice"].generate_message(time=SYSTEM.time,
-                                        type_of_message='REQUEST',
-                                        recipient=SYSTEM.agents["Bob"],
-                                        sentence=mysentence,
-                                        argument=myargument)
+SYSTEM.agents["Alice"].goals.append(alices_goal)
 
-
-print(SYSTEM.agents["Alice"].outgoing_messages[0].convert_to_string())
+SYSTEM.agents["Alice"].print_info()

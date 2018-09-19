@@ -22,7 +22,7 @@ class Agent():
         print("\t- Beliefs:\t{}".format(self.beliefs))
         print("\t- Desires:\t{}".format(self.desires))
         print("\t- Intentions:\t{}".format(self.intentions))
-        print("\t- Goals:\t{}\n".format(self.goals))
+        print("\t- Goals:\t{}\n".format(self.goals[0].convert_to_string()))
 
     def generate_message(self, time, type_of_message, recipient,
             sentence, argument=None, response_msg_type='UNKNOWN'):
