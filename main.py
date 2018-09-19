@@ -31,13 +31,13 @@ alices_goal = Wff(wff_type='bdig',
                   agents=[SYSTEM.agents["Alice"]],
                   wffs=[alices_goal_friends])
 
-alices_belief_let_use_printer = Wff(wff_type='predicate',
+alices_belief_bob_use_printer = Wff(wff_type='predicate',
                                     times=[0],
-                                    predicate=['Do', "let.use.printer"],
-                                    agents=[SYSTEM.agents["Alice"]])
+                                    predicate=['Do', "use.printer"],
+                                    agents=[SYSTEM.agents["Bob"]])
 
 alices_belief_implies = Wff(wff_type='implies',
-                            wffs=[alices_belief_let_use_printer,
+                            wffs=[alices_belief_bob_use_printer,
                                   alices_goal_friends])
 
 alices_belief = Wff(wff_type='bdig',
@@ -58,10 +58,10 @@ bobs_goal = Wff(wff_type='bdig',
                 agents=[SYSTEM.agents["Bob"]],
                 wffs=[bobs_goal_use_printer])
 
-bobs_belief = Wff(wff_type='predicate',
-                  times=[0],
-                  predicate=['Capable', "let.use.printer"],
-                  agents=[SYSTEM.agents["Alice"]])
+# bobs_belief = Wff(wff_type='predicate',
+#                   times=[0],
+#                   predicate=['Capable', "let.use.printer"],
+#                   agents=[SYSTEM.agents["Alice"]])
 
 bobs_intention_friends = Wff(wff_type='predicate',
                              times=[0],
@@ -78,7 +78,7 @@ SYSTEM.agents["Alice"].beliefs.append(alices_belief)
 SYSTEM.agents["Alice"].goals.append(alices_goal)
 
 
-SYSTEM.agents["Bob"].beliefs.append(bobs_belief)
+# SYSTEM.agents["Bob"].beliefs.append(bobs_belief)
 SYSTEM.agents["Bob"].goals.append(bobs_goal)
 SYSTEM.agents["Bob"].intentions.append(bobs_intention)
 
@@ -86,3 +86,7 @@ SYSTEM.agents["Bob"].intentions.append(bobs_intention)
 SYSTEM.agents["Alice"].print_info()
 
 SYSTEM.agents["Bob"].print_info()
+
+#Message from Bob->Alice , will contain sentence and argument
+#sentence is use.printer
+

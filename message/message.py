@@ -1,6 +1,8 @@
 """docstring placeholder"""
 from abc import ABC, abstractmethod
 
+from message.evaluation import BaseEvaluationProcess
+
 
 class BaseMessage(ABC):
     """docstring for Message"""
@@ -9,6 +11,7 @@ class BaseMessage(ABC):
         self.time = time
         self.sender = sender
         self.recipient = recipient
+
         """
         #TODO: Define type of the load (sentence or argument), when the difference in sentence and argument is clear.
         self.load = load # This defines load given with the message, can be None, sentence or an argument
@@ -27,6 +30,7 @@ class RequestMessage(BaseMessage):
     def __init__(self, sentence, argument=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.message_type = 'REQUEST'
+
         self.sentence = sentence
         self.argument = argument
 
@@ -43,6 +47,8 @@ class RequestMessage(BaseMessage):
     def on_receive(self):
         print("Message of type {0} is received at {1}\n".format(
             self.message_type, self.time))
+
+        BaseEvaluationProcess.evaluate_request(message=self)
 
     def convert_to_string(self):
         if self.argument == None:
@@ -75,6 +81,8 @@ class ResponseMessage(BaseMessage):
     def on_receive(self):
         print("Message of type {0} is received at {1}\n".format(
             self.message_type, self.time))
+
+        BaseEvaluationProcess.evaluate_response(message=self)
 
     def convert_to_string(self):
         if self.argument == None:
