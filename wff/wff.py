@@ -91,3 +91,8 @@ class Wff():
             return "[{0}, {1}({2}, {3}) {4}]"\
                 .format(self.times[0], self.send_receive, self.agents[0].name,
                         self.agents[1].name, self.message.convert_to_string())
+
+
+
+    def __eq__(self, other):
+        return self.convert_to_string() == other.convert_to_string()

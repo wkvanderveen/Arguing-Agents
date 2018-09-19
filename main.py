@@ -25,6 +25,12 @@ alices_goal_friends = Wff(wff_type='predicate',
                           predicate=['Do', "be.friends"],
                           agents=[SYSTEM.agents["Bob"]],
                           )
+
+alices_goal_not_friends = Wff(wff_type='not',
+                              wffs=[alices_goal_friends]
+                          )
+
+
 alices_goal = Wff(wff_type='bdig',
                   times=[0],
                   predicate=['Goal'],
@@ -38,7 +44,8 @@ alices_belief_bob_use_printer = Wff(wff_type='predicate',
 
 alices_belief_implies = Wff(wff_type='implies',
                             wffs=[alices_belief_bob_use_printer,
-                                  alices_goal_friends])
+                                  #alices_goal_friends])
+                                  alices_goal_not_friends])
 
 alices_belief = Wff(wff_type='bdig',
                     times=[0],
@@ -83,4 +90,5 @@ SYSTEM.agents["Bob"].generate_message(time=SYSTEM.time, type_of_message='REQUEST
         recipient=SYSTEM.agents["Alice"], sentence=bobs_goal_use_printer,
         argument=bobs_intention_friends)
 
+SYSTEM.advance()
 SYSTEM.advance()

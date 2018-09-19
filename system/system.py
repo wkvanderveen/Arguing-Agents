@@ -23,6 +23,8 @@ class System():
     def advance(self):
         """Advance the time by a value of 1."""
 
+        print("{}\nUpdating system...".format('-' * 56))
+
         messages_sent = 0
         messages_received = 0
 
@@ -33,10 +35,9 @@ class System():
             messages_received += agent.receive_messages()
 
         self.time += 1
-        print("{}\nUpdating system...".format('-'*56))
-        print("> Time is now {}".format(self.time))
-        print("> Messages Sent: {0}, Messages Received: {1}\n".format(
-            messages_sent, messages_received))
+        #print("> Time is now {}".format(self.time))
+        #print("> Messages Sent: {0}, Messages Received: {1}\n".format(
+            #messages_sent, messages_received))
 
     def print_info(self):
         """Print the information about the system."""

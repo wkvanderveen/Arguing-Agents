@@ -41,12 +41,13 @@ class RequestMessage(BaseMessage):
             self.sentence.convert_to_string(), arg_info))
 
     def on_send(self):
-        print("Message of type {0} is sent at {1}".format(
-            self.message_type, self.time))
+        # print("Message of type {0} is sent at {1}".format(
+        #     self.message_type, self.time))
+        pass
 
     def on_receive(self):
-        print("Message of type {0} is received at {1}\n".format(
-            self.message_type, self.time))
+        # print("Message of type {0} is received at {1}\n".format(
+        #     self.message_type, self.time))
 
         BaseEvaluationProcess.evaluate_request(message=self)
 
@@ -75,12 +76,14 @@ class ResponseMessage(BaseMessage):
             self.sentence.convert_to_string(), arg_info))
 
     def on_send(self):
-        print("Message of type {0} is sent at {1}".format(
-            self.message_type, self.time))
+        # print("Message of type {0} is sent at {1}".format(
+        #     self.message_type, self.time))
+        print(self.convert_to_string())
+        pass
 
     def on_receive(self):
-        print("Message of type {0} is received at {1}\n".format(
-            self.message_type, self.time))
+        # print("Message of type {0} is received at {1}\n".format(
+        #     self.message_type, self.time))
 
         BaseEvaluationProcess.evaluate_response(message=self)
 

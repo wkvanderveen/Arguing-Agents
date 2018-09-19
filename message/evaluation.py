@@ -53,10 +53,12 @@ class BaseEvaluationProcess():
 
         if temp_bel_1 in message.recipient.beliefs or temp_bel_2 in message.recipient.beliefs:
             #accept
-            pass
+            message.recipient.generate_message(0,'RESPONSE', message.sender,
+            sentence, response_msg_type='ACCEPT')
         else:
             #reject
-            pass
+            message.recipient.generate_message(0, 'RESPONSE', message.sender,
+                                               sentence, response_msg_type='REJECT')
 
 
 
@@ -64,12 +66,14 @@ class BaseEvaluationProcess():
     def evaluate_response(cls,message=None, *args, **kwargs):
         sentence = message.sentence
         argument = message.argument
-        if message.response_message_type == 'REJECT':
+        if message.response_msg_type == 'ACCEPT':
             #print(sentence.convert_to_string().join('was Rejected'))
-            pass
-        elif message.response_message_type == 'ACCEPT':
+            #print("Rejected {}",sentence.predicate[1])
+            print("Allowed to use printer")
+        elif message.response_msg_type == 'REJECT':
             #print(message.sentence.action)
-            pass
+            #print("Rejected {}", sentence.predicate[1])
+            print("Not allowed to use printer")
 
     @classmethod
     def evaluate_declaration(cls,message=None, *args, **kwargs):
