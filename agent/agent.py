@@ -19,10 +19,10 @@ class Agent():
         """Print the relevant information about this agent."""
         print("This is Agent '{}'.".format(self.name))
         print("\tCurrent modal operators:")
-        print("\t- Beliefs:\t{}".format(self.beliefs))
-        print("\t- Desires:\t{}".format(self.desires))
-        print("\t- Intentions:\t{}".format(self.intentions))
-        print("\t- Goals:\t{}\n".format(self.goals[0].convert_to_string()))
+        print("\t- Beliefs:\t{}".format(', '.join(map(lambda x : x.convert_to_string(), self.beliefs))))
+        print("\t- Desires:\t{}".format(', '.join(map(lambda x : x.convert_to_string(), self.desires))))
+        print("\t- Intentions:\t{}".format(', '.join(map(lambda x : x.convert_to_string(), self.intentions))))
+        print("\t- Goals:\t{}\n".format(', '.join(map(lambda x : x.convert_to_string(), self.goals))))
 
     def generate_message(self, time, type_of_message, recipient,
             sentence, argument=None, response_msg_type='UNKNOWN'):

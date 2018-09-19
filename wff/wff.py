@@ -66,23 +66,23 @@ class Wff():
                                                              self.wffs[0].convert_to_string(),
                                                              self.preference)
             if self.predicate[0] == 'Int':
-                if len(wffs) == 1:
+                if len(self.wffs) == 1:
                     return "[{0}, Int({1}, {2})]".format(self.times[0],
                                                          self.agents[0].name,
-                                                         self.wffs[0])
-                if len(wffs) > 1:
+                                                         self.wffs[0].convert_to_string())
+                if len(self.wffs) > 1:
                     return "[{0}, Int({1}, {2}, {3})]".format(self.times[0],
                                                               self.agents[0].name,
-                                                              self.wffs[0],
-                                                              self.wffs[1])
+                                                              self.wffs[0].convert_to_string(),
+                                                              self.wffs[1].convert_to_string())
             if self.predicate[0] == 'Pref':
                 return "[{0}, Pref({1}, {2}, {3})]".format(self.times[0],
                                                            self.agents[0].name,
-                                                           self.wffs[0],
-                                                           self.wffs[1])
+                                                           self.wffs[0].convert_to_string(),
+                                                           self.wffs[1].convert_to_string())
             if self.predicate[0] == 'Agent':
                 return "[{0}, Agent({1}, {2})]".format(self.times[0],
-                                                       self.wffs[0],
+                                                       self.wffs[0].convert_to_string(),
                                                        self.agents[0].name)
 
 
