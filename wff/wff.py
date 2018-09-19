@@ -54,6 +54,38 @@ class Wff():
         if self.wff_type == 'exists':
             return "EXISTS {0} {1}".format(self.terms[0], self.wffs[0].convert_to_string())
 
+        if self.wff_type == 'bdig':
+            if self.predicate[0] in ['Bel', 'Goal']:
+                return "[{0}, {1}({2}, {3})]".format(self.times[0],
+                                                     self.predicate[0],
+                                                     self.agents[0].name,
+                                                     self.wffs[0].convert_to_string())
+            if self.predicate[0] == 'Desire':
+                return "[{0}, Desire({1}, {2}, {3})]".format(self.times[0],
+                                                             self.agents[0].name,
+                                                             self.wffs[0].convert_to_string(),
+                                                             self.preference)
+            if self.predicate[0] == 'Int':
+                if len(wffs) == 1:
+                    return "[{0}, Int({1}, {2})]".format(self.times[0],
+                                                         self.agents[0].name,
+                                                         self.wffs[0])
+                if len(wffs) > 1:
+                    return "[{0}, Int({1}, {2}, {3})]".format(self.times[0],
+                                                              self.agents[0].name,
+                                                              self.wffs[0],
+                                                              self.wffs[1])
+            if self.predicate[0] == 'Pref':
+                return "[{0}, Pref({1}, {2}, {3})]".format(self.times[0],
+                                                           self.agents[0].name,
+                                                           self.wffs[0],
+                                                           self.wffs[1])
+            if self.predicate[0] == 'Agent':
+                return "[{0}, Agent({1}, {2})]".format(self.times[0],
+                                                       self.wffs[0],
+                                                       self.agents[0].name)
+
+
         if self.wff_type == 'with_message':
             return "[{0}, {1}({2}, {3}) {4}]"\
                 .format(self.times[0], self.send_receive, self.agents[0].name,

@@ -78,9 +78,9 @@ class ResponseMessage(BaseMessage):
 
     def convert_to_string(self):
         if self.argument == None:
-            if response_msg_type == 'ACCEPT':
+            if self.response_msg_type == 'ACCEPT':
                 return "Accept({0})".format(self.sentence.convert_to_string())
-            elif response_msg_type == 'REJECT':
+            elif self.response_msg_type == 'REJECT':
                 return "Reject({0})".format(self.sentence.convert_to_string())
             else:
                 return "Response({0})".format(self.sentence.convert_to_string())
