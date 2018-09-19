@@ -72,7 +72,6 @@ bobs_intention = Wff(wff_type='bdig',
 SYSTEM.agents["Alice"].beliefs.append(alices_belief)
 SYSTEM.agents["Alice"].goals.append(alices_goal)
 
-
 SYSTEM.agents["Bob"].goals.append(bobs_goal)
 SYSTEM.agents["Bob"].intentions.append(bobs_intention)
 
@@ -85,4 +84,3 @@ SYSTEM.agents["Bob"].generate_message(time=SYSTEM.time, type_of_message='REQUEST
         argument=bobs_intention_friends)
 
 SYSTEM.advance()
-

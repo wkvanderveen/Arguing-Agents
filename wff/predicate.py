@@ -8,8 +8,8 @@ Definititon:
 [r, P(x0, . . .,xn) is a wff (read as: P(x0, . .,xn) is true at time t).
 '''
 
-from wff.wff import WFF
-class Predicate(WFF):
+from wff.wff import Wff
+class Predicate(Wff):
 
     def __init__(self,time, agent, constant = None, term = None, **kwargs):
         self.time = time

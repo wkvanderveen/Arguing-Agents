@@ -70,6 +70,7 @@ class Wff():
                     return "[{0}, Int({1}, {2})]".format(self.times[0],
                                                          self.agents[0].name,
                                                          self.wffs[0].convert_to_string())
+
                 if len(self.wffs) > 1:
                     return "[{0}, Int({1}, {2}, {3})]".format(self.times[0],
                                                               self.agents[0].name,
