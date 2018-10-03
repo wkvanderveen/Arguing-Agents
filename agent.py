@@ -1,5 +1,5 @@
 """docstring placeholder"""
-from message.message import *
+from message import *
 
 
 class Agent():
@@ -13,7 +13,7 @@ class Agent():
         self.outgoing_messages = []
         self.incoming_messages = []
 
-        print("Agent '{}' initialized.\n".format(self.name))
+        print("Agent '{}' initialized.".format(self.name))
 
     def print_info(self):
         """Print the relevant information about this agent."""

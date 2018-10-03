@@ -1,5 +1,5 @@
 ''' This will define evaluation process of message '''
-from wff.wff import Wff
+from wff import Wff
 
 
 class BaseEvaluationProcess():
