@@ -1,6 +1,6 @@
 """docstring placeholder"""
 
-from agent.agent import Agent
+from agent import Agent
 
 class System():
     """docstring for System"""
@@ -9,7 +9,7 @@ class System():
         self.time = 0
         self.agents = dict()
 
-        print("System initialized.\n")
+        print("System initialized.")
 
     def create_agent(self, name, beliefs, desires, intentions, goals):
         """Create a new Agent in the system."""

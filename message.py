@@ -1,7 +1,7 @@
 """docstring placeholder"""
 from abc import ABC, abstractmethod
 
-from message.evaluation import BaseEvaluationProcess
+from evaluation import BaseEvaluationProcess
 
 
 class BaseMessage(ABC):
