@@ -67,12 +67,8 @@ class BaseEvaluationProcess():
         sentence = message.sentence
         argument = message.argument
         if message.response_msg_type == 'ACCEPT':
-            #print(sentence.convert_to_string().join('was Rejected'))
-            #print("Rejected {}",sentence.predicate[1])
             print("Allowed to use printer")
         elif message.response_msg_type == 'REJECT':
-            #print(message.sentence.action)
-            #print("Rejected {}", sentence.predicate[1])
             print("Not allowed to use printer")
 
     @classmethod
