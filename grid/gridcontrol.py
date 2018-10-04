@@ -1,6 +1,6 @@
 import pygame
 
-class MapControl(object):
+class GridControl(object):
 
     def __init__(self, model):
         self.model = model
@@ -28,6 +28,5 @@ class MapControl(object):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_b:
                     self.model.center = -1
-
 
         return False

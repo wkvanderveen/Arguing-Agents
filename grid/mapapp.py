@@ -1,31 +1,34 @@
 #!/usr/bin/env python
 import pygame
-from pygame.locals import *
-from mapmodel import MapModel
-from mapview import MapView
-from mapcontrol import MapControl
+from random import randint
 
-class MapApp(object):
+from gridmodel import GridModel
+from gridview import GridView
+from gridcontrol import GridControl
+import constants
+
+
+class Grid(object):
 
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption('Map with cars')
-        self.model = MapModel()
-        self.view = MapView(self.model)
-        self.control = MapControl(self.model)
-
-        #test -----
-        # self.model.addCenter(["test", "1", "localhost", "1111"])
-        # self.model.addClient(["test", "1", "2", "4", "4"])
-        # self.model.cars[0][0].goto("1,2,4,4")
-
+        pygame.display.set_caption('Grid with agents')
+        self.model = GridModel()
+        self.view = GridView(self.model)
+        self.control = GridControl(self.model)
 
     def start_loop(self):
         clock = pygame.time.Clock()
         crashed = False
+        no_agents = 10
+
+        for i in range(no_agents):
+            x = randint(0, constants.TILES_X-1)
+            y = randint(0, constants.TILES_Y-1)
+
+            self.model.add_agent(x, y)
 
         while not crashed:
-
             #handle input
             crashed = self.control.checkEvents()
 
@@ -36,14 +39,15 @@ class MapApp(object):
 
             #update
             pygame.display.update()
-            clock.tick(60)
+            clock.tick(3)
+
 
 def main():
-    app = MapApp()
-    app.start_loop()
+    grid = Grid()
+    grid.start_loop()
     pygame.quit()
     quit()
 
+
 if __name__== "__main__":
     main()
-  
