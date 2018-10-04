@@ -1,7 +1,19 @@
+# color parameters
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-BLUE = (0, 0, 255)
+BLUE = (66, 146, 244)
+RED = (244, 92, 65)
+YELLOW = (244, 211, 65)
+GREEN = (151, 244, 65)
 
+
+
+# agent parameters
+MONEY = 500.0  # initial money of an agent
+MAXPATIENCE = 10  # maximum patience an agent has
+
+
+# window parameters
 RECTDIST = 1  # size of borders between tiles
 RECTSIZE = 40  # size of tiles
 

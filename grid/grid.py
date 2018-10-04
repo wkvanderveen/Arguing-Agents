@@ -8,7 +8,13 @@ from gridcontrol import GridControl
 import constants
 
 
-class Grid(object):
+class Parameters():
+    def __init__(self):
+        self.no_agents = int(input("Number of agents = "))
+        self.updates = int(input("Updates per second = "))
+
+
+class Grid():
 
     def __init__(self):
         pygame.init()
@@ -17,16 +23,13 @@ class Grid(object):
         self.view = GridView(self.model)
         self.control = GridControl(self.model)
 
-    def start_loop(self):
+    def start_loop(self, parameters):
         clock = pygame.time.Clock()
         crashed = False
-        no_agents = 10
 
-        for i in range(no_agents):
-            x = randint(0, constants.TILES_X-1)
-            y = randint(0, constants.TILES_Y-1)
-
-            self.model.add_agent(x, y)
+        # Add agents
+        for i in range(parameters.no_agents):
+            self.model.add_agent()
 
         while not crashed:
             # handle input
@@ -39,12 +42,13 @@ class Grid(object):
 
             # update
             pygame.display.update()
-            clock.tick(3)
+            clock.tick(parameters.updates)
 
 
 def main():
+    parameters = Parameters()
     grid = Grid()
-    grid.start_loop()
+    grid.start_loop(parameters)
     pygame.quit()
     quit()
 

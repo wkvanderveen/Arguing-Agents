@@ -17,6 +17,7 @@ class GridView(object):
     def draw(self):
         self.draw_bg()
         self.draw_tiles()
+        self.draw_agents()
 
     def draw_bg(self):
         self.screen.fill(self.BACKGROUNDCOLOR)
@@ -30,12 +31,13 @@ class GridView(object):
                 x_pos += constants.RECTSIZE + constants.RECTDIST
             y_pos += constants.RECTSIZE + constants.RECTDIST
 
+    def draw_agents(self):
         agents = self.model.agents
-
         for agent in agents:
-
-            color = constants.BLACK
-
+            if agent.no_encounters() > 0:
+                color = constants.YELLOW
+            else:
+                color = constants.GREEN
             pygame.draw.rect(self.screen, color, (self.get_grid_pos(agent.x, agent.y)[0],
                                                   self.get_grid_pos(agent.x, agent.y)[1], constants.RECTSIZE - 8,
                                                   constants.RECTSIZE - 8))
