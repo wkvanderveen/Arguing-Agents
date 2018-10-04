@@ -1,6 +1,6 @@
 import pygame
 import constants
-from gridmodel import GridModel
+# from gridmodel import GridModel
 
 
 class GridView(object):
