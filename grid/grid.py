@@ -31,9 +31,6 @@ class Grid():
         for i in range(parameters.no_agents):
             self.model.add_agent(i, parameters.no_agents)
 
-        #TODO remove this hardcoding
-        self.model.set_following_agent()
-
         timestep = 0
         while not crashed:
             timestep = timestep + 1

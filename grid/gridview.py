@@ -35,9 +35,12 @@ class GridView(object):
         agents = self.model.agents
         for agent in agents:
             color = agent.get_color()
-            pygame.draw.rect(self.screen, color, (self.get_grid_pos(agent.x, agent.y)[0],
-                                                  self.get_grid_pos(agent.x, agent.y)[1], constants.RECTSIZE - 8,
-                                                  constants.RECTSIZE - 8))
+            pos = self.get_grid_pos(agent.x, agent.y)
+            pygame.draw.rect(self.screen, color, (pos[0], pos[1], constants.RECTSIZE - 8, constants.RECTSIZE - 8))
+            text = str(agent.get_id())
+            font = self.font
+            text = font.render(text, True, constants.BLACK)
+            self.screen.blit(text, (pos[0], pos[1]))
 
 
     @staticmethod

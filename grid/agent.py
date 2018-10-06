@@ -17,6 +17,7 @@ class Agent():
         self.basket = Basket()
 
         self.current_activity = constants.RANDOM_WALK
+        self.direction = 0
         self.target_agent = None
         self.trade_partner = None
 
@@ -24,26 +25,51 @@ class Agent():
 
         self.set_color()
 
-    def update(self):
+    def update(self, rand_targ): # TODO: remove random target
         if self.current_activity == constants.RANDOM_WALK:
             self.random_walk()
+            if random() < 0.01:
+                # TODO: now randomly assigns target
+                self.set_random_target(rand_targ)
         elif self.current_activity == constants.SEARCH_AGENT:
             self.search_agent()
         elif self.current_activity == constants.NEGOTIATE:
             self.negotiate()
+            # TODO now randomly stops negotiation
+            if random() < 0.001:
+                self.stop_negotiation()
 
         self.set_color()
 
+    def set_random_target(self, target):
+        self.current_activity = constants.SEARCH_AGENT
+        self.target_agent = target
+
     def negotiate(self):
-        if self.adjacent_to_agent(self.trade_partner) and self.trade_partner.accepts_request(self):
+        if self.adjacent_to_agent(self.trade_partner):
             print("request sent from agent " + str(self.get_id()) + " to agent " + str(self.trade_partner.get_id()) + "...")
             print("response from agent " + str(self.trade_partner.get_id()) + ": " + self.trade_partner.request(self))
         else:
             self.current_activity = constants.RANDOM_WALK
             self.random_walk()
 
-    #  received from other agent
+    def stop_negotiation(self):
+        self.agree_to_stop_negotiation(self.trade_partner)
+        self.leave_negotiation()
+
+    def leave_negotiation(self):
+        self.current_activity = constants.RANDOM_WALK
+        self.trade_partner = None
+        self.target_agent = None
+
+    #  -------------------------------------
+    #  ----- received from other agent -----
+    def agree_to_stop_negotiation(self, other_agent):
+        self.leave_negotiation()
+
     def accepts_request(self, other_agent):
+        if self.current_activity == constants.NEGOTIATE:
+            return False
         self.current_activity = constants.NEGOTIATE
         self.trade_partner = other_agent
         return True
@@ -51,6 +77,8 @@ class Agent():
     @staticmethod
     def request(other_agent):
         return "hello agent " + str(other_agent.get_id())
+    #  ----- received from other agent -----
+    #  -------------------------------------
 
     def search_agent(self):
         if self.target_agent is None:
@@ -66,7 +94,11 @@ class Agent():
         self.current_activity = constants.NEGOTIATE
         self.trade_partner = self.target_agent
         self.target_agent = None
-        self.negotiate()
+        if self.trade_partner.accepts_request(self):
+            self.negotiate()
+        else:
+            self.trade_partner = None
+            self.current_activity = constants.RANDOM_WALK
 
     def adjacent_to_agent(self, other):
         if (abs(self.x - other.x) + abs(self.y - other.y)) == 1:
@@ -75,18 +107,26 @@ class Agent():
 
     def move_towards_target(self):
         # try to move towards target agent. If not possible, return false
-        dest_x = self.target_agent.x
-        dest_y = self.target_agent.y
+        bf_search = False
 
-        pref_dir = self.preferred_directions(dest_x, dest_y)
-        for direction in pref_dir:
-            if self.cannot_move(direction):
-                continue
-            dx, dy = self.movement(direction)
-            self.x = self.x + dx
-            self.y = self.y + dy
+        if bf_search:
+            dir = bf_search()
+
             return True
-        return False
+        else:
+            dest_x = self.target_agent.x
+            dest_y = self.target_agent.y
+
+            pref_dir = self.preferred_directions(dest_x, dest_y)
+            for direction in pref_dir:
+                if self.cannot_move(direction):
+                    continue
+                dx, dy = self.movement(direction)
+                self.x = self.x + dx
+                self.y = self.y + dy
+                return True
+
+            return False
 
     def set_target(self, agent):
         self.target_agent = agent
@@ -132,6 +172,9 @@ class Agent():
                 >= constants.TILES_Y or not self.neighbors[direction] is None:
             return True
         return False
+
+    def set_dir(self, direction):
+        self.direction = direction
 
     def set_neighbors(self, neighbors):
         self.neighbors = neighbors
