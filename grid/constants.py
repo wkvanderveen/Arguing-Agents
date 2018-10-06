@@ -26,9 +26,10 @@ MAXPATIENCE = 10  # maximum patience an agent has
 # window parameters
 RECTDIST = 1  # size of borders between tiles
 RECTSIZE = 40  # size of tiles
+MAX_UPDATES_PER_S = 10
 
 TILES_X = 20  # number of tiles on each row
-TILES_Y = 20 # number of tiles in each column
+TILES_Y = 20  # number of tiles in each column
 
 WIDTH = TILES_X * (RECTDIST + RECTSIZE) + RECTDIST
 HEIGHT = TILES_Y * (RECTDIST + RECTSIZE) + RECTDIST

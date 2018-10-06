@@ -10,8 +10,8 @@ import constants
 
 class Parameters():
     def __init__(self):
-        self.no_agents = int(input("Number of agents = "))
-        self.updates = int(input("Updates per second = "))
+        self.no_agents = min(int(input("Number of agents = ")), constants.TILES_X * constants.TILES_Y - 1)
+        self.updates = min(int(input("Updates per second = ")), constants.MAX_UPDATES_PER_S)
 
 
 class Grid():

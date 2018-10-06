@@ -15,8 +15,8 @@ class GridModel(object):
         shuffle(indices)
         for index in indices:  # update agents in random order
             agent = self.agents[index]
-            neighbors = self.check_neighbors(agent)
-            agent.update(neighbors)
+            agent.set_neighbors(self.check_neighbors(agent))
+            agent.update()
 
         self.check_encounters()
         self.start_negotiation()
@@ -38,22 +38,18 @@ class GridModel(object):
             agent.negotiate()
 
     def check_neighbors(self, agent):
-        dirs = []
-        if self.is_occupied(agent.x, agent.y - 1):
-            dirs.append(constants.NORTH)
-        if self.is_occupied(agent.x + 1, agent.y):
-            dirs.append(constants.EAST)
-        if self.is_occupied(agent.x, agent.y + 1):
-            dirs.append(constants.SOUTH)
-        if self.is_occupied(agent.x - 1, agent.y):
-            dirs.append(constants.WEST)
+        dirs = [None, None, None, None]
+        dirs[constants.NORTH] = self.agent_at(agent.x, agent.y - 1)
+        dirs[constants.EAST] = self.agent_at(agent.x + 1, agent.y)
+        dirs[constants.SOUTH] = self.agent_at(agent.x, agent.y + 1)
+        dirs[constants.WEST] = self.agent_at(agent.x - 1, agent.y)
         return dirs
 
-    def is_occupied(self, x, y):
+    def agent_at(self, x, y):
         for agent in self.agents:
             if agent.x == x and agent.y == y:
-                return True
-        return False
+                return agent
+        return None
 
     def get_number_of_agents(self):
         return len(self.agents)
