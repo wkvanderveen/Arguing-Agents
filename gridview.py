@@ -1,6 +1,5 @@
 import pygame
 import constants
-# from gridmodel import GridModel
 
 
 class GridView(object):
@@ -8,8 +7,8 @@ class GridView(object):
     FONTSIZE = 20
     BACKGROUNDCOLOR = constants.WHITE
 
-    def __init__(self, model):
-        self.model = model
+    def __init__(self, system):
+        self.system = system
         self.screen = pygame.display.set_mode((constants.WIDTH, constants.HEIGHT))
         pygame.font.init()
         self.font = pygame.font.SysFont('fontawesome5free',self.FONTSIZE)
@@ -32,8 +31,8 @@ class GridView(object):
             y_pos += constants.RECTSIZE + constants.RECTDIST
 
     def draw_agents(self):
-        agents = self.model.agents
-        for agent in agents:
+        agents = self.system.agents
+        for name, agent in agents.items():
             color = agent.get_color()
             pos = self.get_grid_pos(agent.x, agent.y)
             pygame.draw.rect(self.screen, color, (pos[0], pos[1], constants.RECTSIZE - 8, constants.RECTSIZE - 8))

@@ -27,10 +27,6 @@ class Grid():
         clock = pygame.time.Clock()
         crashed = False
 
-        # Add agents
-        for i in range(parameters.no_agents):
-            self.model.add_agent(i, parameters.no_agents)
-
         timestep = 0
         while not crashed:
             timestep = timestep + 1

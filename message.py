@@ -38,13 +38,6 @@ class Response(BaseMessage):
             print("Positive response from {0} received by {1}.".format(
                 self.sender.name, self.receiver.name))
 
-            self.sender.state = NegotiationState(this_agent=self.sender,
-                                                 buy_or_sell=('buy' if self.request.request_type == 'sell' else 'sell'),
-                                                 other_agent=self.receiver)
-
-            self.receiver.state = NegotiationState(this_agent=self.receiver,
-                                                   buy_or_sell=self.request.request_type,
-                                                   other_agent=self.sender)
         else:
             raise ValueError("Incorrect Response type received: {}".format(
                 self.response_type))

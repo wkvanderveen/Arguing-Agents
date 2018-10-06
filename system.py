@@ -1,5 +1,11 @@
 """docstring placeholder"""
 from agent import *
+import pygame
+from gridmodel import GridModel
+from gridview import GridView
+from gridcontrol import GridControl
+import constants
+import time
 
 class System():
     """docstring for System"""
@@ -8,11 +14,22 @@ class System():
         self.time = 0
         self.agents = dict()
 
+        pygame.init()
+        pygame.display.set_caption("Grid with agents")
+        self.model = GridModel()
+        self.view = GridView(self)
+        self.control = GridControl(self.model)
+
         print("System initialized.")
 
-    def create_agent(self, name):
+    def create_agent(self, name, agent_id, no_agents, x, y):
         """Create a new Agent in the system."""
-        new_agent = Agent(name)
+        new_agent = Agent(name=name,
+                          agent_id=agent_id,
+                          no_agents=no_agents,
+                          x=x,
+                          y=y)
+
         self.agents[name] = new_agent
 
     def advance(self):
@@ -43,13 +60,30 @@ class System():
 
 
             elif isinstance(agent.state, RandomWalkState):
-                agent.move_random()
+                agent.random_walk()
 
             elif isinstance(agent.state, WalkToAgentState):
                 # TODO: find best free move to this agent
-                pass
+                agent.search_agent()
+
+        for name, agent in self.agents.items():
+            agent.set_color()
 
         self.time += 1
+
+        # handle input
+        crashed = self.control.check_events()
+
+        self.model.update()
+
+        # draw screen
+        self.view.draw()
+
+        # update
+        pygame.display.update()
+        time.sleep(0.2)
+        return self.control.check_events()
+
 
 
     def print_info(self):
