@@ -18,7 +18,7 @@ class Grid():
 
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption('Grid with agents')
+        pygame.display.set_caption("Grid with agents")
         self.model = GridModel()
         self.view = GridView(self.model)
         self.control = GridControl(self.model)
@@ -29,9 +29,15 @@ class Grid():
 
         # Add agents
         for i in range(parameters.no_agents):
-            self.model.add_agent(i)
+            self.model.add_agent(i, parameters.no_agents)
 
+        #TODO remove this hardcoding
+        self.model.set_following_agent()
+
+        timestep = 0
         while not crashed:
+            timestep = timestep + 1
+            print("t = " + str(timestep))
             # handle input
             crashed = self.control.check_events()
 

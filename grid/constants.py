@@ -22,6 +22,11 @@ WEST = 3
 MONEY = 500.0  # initial money of an agent
 MAXPATIENCE = 10  # maximum patience an agent has
 
+RANDOM_WALK = 0
+SEARCH_AGENT = 1
+NEGOTIATE = 2
+
+
 
 # window parameters
 RECTDIST = 1  # size of borders between tiles
