@@ -39,36 +39,9 @@ class Agent():
           self.name,
           self.position))
 
-    def move_random(self):
-        while(True):
-            choice = randint(1, 5)
-            if choice == 1 and self.position[0] < gridconstants.TILES_X:
-                self.position[0] += 1
-                print("Randomly moved agent {0} to the right.".format(self.name))
-                return
-            elif choice == 2 and self.position[0] > 0:
-                self.position[0] -= 1
-                print("Randomly moved agent {0} to the left.".format(self.name))
-                return
-            elif choice == 3 and self.position[1] < gridconstants.TILES_Y:
-                self.position[1] += 1
-                print("Randomly moved agent {0} down.".format(self.name))
-                return
-            elif choice == 4 and self.position[1] > 0:
-                self.position[1] -= 1
-                print("Randomly moved agent {0} up.".format(self.name))
-                return
-            elif choice == 5:
-                print("Randomly moved agent {0} nowhere.".format(self.name))
-                return
-
     def search_agent(self):
-        if self.target_agent is None:
-            self.current_activity = constants.RANDOM_WALK
-            return False
-        if self.adjacent_to_agent(self.target_agent):
+        if self.adjacent_to_agent(self.state.other_agent):
             print("Found target")
-            self.start_negotiate()
         elif not self.move_towards_target():
             self.random_walk()
 
@@ -87,8 +60,8 @@ class Agent():
 
             return True
         else:
-            dest_x = self.target_agent.x
-            dest_y = self.target_agent.y
+            dest_x = self.state.other_agent.x
+            dest_y = self.state.other_agent.y
 
             pref_dir = self.preferred_directions(dest_x, dest_y)
             for direction in pref_dir:
