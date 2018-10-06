@@ -3,129 +3,74 @@ from abc import ABC, abstractmethod
 
 from evaluation import BaseEvaluationProcess
 
+from agentstate import NegotiationState, WalkToAgentState, RandomWalkState
 
 class BaseMessage(ABC):
     """docstring for Message"""
-    def __init__(self, time, sender=None, recipient=None):
+    def __init__(self, sender=None, receiver=None):
 
-        self.time = time
         self.sender = sender
-        self.recipient = recipient
+        self.receiver = receiver
 
-        """
-        #TODO: Define type of the load (sentence or argument), when the difference in sentence and argument is clear.
-        self.load = load # This defines load given with the message, can be None, sentence or an argument
-        """
-
-    @abstractmethod
-    def on_receive(self):
-        print("Message received")
-
-    @abstractmethod
-    def on_send(self):
-        print("Message sent")
-
-
-class RequestMessage(BaseMessage):
-    def __init__(self, sentence, argument=None, *args, **kwargs):
+class Response(BaseMessage):
+    def __init__(self, response_type, request, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.message_type = 'REQUEST'
 
-        self.sentence = sentence
-        self.argument = argument
-
-        arg_info = "" if argument is None else \
-            " with argument {}".format(self.argument.convert_to_string())
-
-        print("Request initialized: {0}{1}.\n".format(
-            self.sentence.convert_to_string(), arg_info))
+        self.response_type = response_type
+        self.request = request
 
     def on_send(self):
-        # print("Message of type {0} is sent at {1}".format(
-        #     self.message_type, self.time))
-        pass
-
-    def on_receive(self):
-        # print("Message of type {0} is received at {1}\n".format(
-        #     self.message_type, self.time))
-
-        BaseEvaluationProcess.evaluate_request(message=self)
-
-    def convert_to_string(self):
-        if self.argument == None:
-            return "Request({0})".format(self.sentence.convert_to_string())
+        if self.response_type == 'no':
+            print("{0} sends negative response to {1}.".format(
+                self.sender.name, self.receiver.name))
+        elif self.response_type == 'yes':
+            print("{0} sends positive response to {1}.".format(
+                self.sender.name, self.receiver.name))
         else:
-            return "Request({0}, {1})".format(self.sentence.convert_to_string(),
-                                              self.argument.convert_to_string())
-
-
-class ResponseMessage(BaseMessage):
-    def __init__(self, sentence, argument=None,
-            response_msg_type='UNKNOWN', *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.message_type = 'RESPONSE'
-        # Response Message Type can be of three types 1: ACCEPT, 2: REJECT 3: UNKNOWN
-        self.response_msg_type = response_msg_type
-        self.sentence = sentence
-        self.argument = argument
-
-        arg_info = "" if argument is None else \
-            " with argument {}".format(self.argument.convert_to_string())
-
-        print("Response initialized: {0}{1}.\n".format(
-            self.sentence.convert_to_string(), arg_info))
-
-    def on_send(self):
-        # print("Message of type {0} is sent at {1}".format(
-        #     self.message_type, self.time))
-        print(self.convert_to_string())
-        pass
+            raise ValueError("Incorrect Response type sent: {}".format(
+                self.response_type))
 
     def on_receive(self):
-        # print("Message of type {0} is received at {1}\n".format(
-        #     self.message_type, self.time))
+        if self.response_type == 'no':
+            print("Negative response from {0} received by {1}.".format(
+                self.sender.name, self.receiver.name))
+        elif self.response_type == 'yes':
+            print("Positive response from {0} received by {1}.".format(
+                self.sender.name, self.receiver.name))
 
-        BaseEvaluationProcess.evaluate_response(message=self)
+            self.sender.state = NegotiationState(this_agent=self.sender,
+                                                 buy_or_sell=('buy' if self.request.request_type == 'sell' else 'sell'),
+                                                 other_agent=self.receiver)
 
-    def convert_to_string(self):
-        if self.argument == None:
-            if self.response_msg_type == 'ACCEPT':
-                return "Accept({0})".format(self.sentence.convert_to_string())
-            elif self.response_msg_type == 'REJECT':
-                return "Reject({0})".format(self.sentence.convert_to_string())
-            else:
-                return "Response({0})".format(self.sentence.convert_to_string())
+            self.receiver.state = NegotiationState(this_agent=self.receiver,
+                                                   buy_or_sell=self.request.request_type,
+                                                   other_agent=self.sender)
         else:
-            if self.response_msg_type == 'ACCEPT':
-                return "Accept({0}, {1})"\
-                    .format(self.sentence.convert_to_string(),
-                            self.argument.convert_to_string())
-            elif self.response_msg_type == 'REJECT':
-                return "Reject({0}, {1})"\
-                    .format(self.sentence.convert_to_string(),
-                            self.argument.convert_to_string())
-            else:
-                return "Response({0}, {1})"\
-                    .format(self.sentence.convert_to_string(),
-                            self.argument.convert_to_string())
+            raise ValueError("Incorrect Response type received: {}".format(
+                self.response_type))
 
 
-class DeclarationMessage(BaseMessage):
-    def __init__(self, sentence, *args, **kwargs):
+class Request(BaseMessage):
+    def __init__(self, request_type, fruit, quantity, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.message_type = 'DECLARATION'
-        self.sentence = sentence
-
-        print("Declaration initialized: {}.\n".format(
-            self.sentence.convert_to_string()))
+        self.request_type = request_type
+        self.fruit = fruit
+        self.quantity = quantity
 
     def on_send(self):
-        print("Message of type {0} is sent at {1}".format(
-            self.message_type, self.time))
+        print("{0} sent request to {1} {2} {3} {4} {5}".format(
+            self.sender.name,
+            self.request_type,
+            self.quantity,
+            self.fruit,
+            'to' if self.request_type == 'sell' else 'from',
+            self.receiver.name))
 
     def on_receive(self):
-        print("Message of type {0} is received at {1}\n".format(
-            self.message_type, self.time))
-
-    def convert_to_string(self):
-        return "Declaration({0})".format(self.sentence.convert_to_string())
+        print("{0} received request to {1} {2} {3} {4} {5}".format(
+            self.receiver.name,
+            'sell' if self.request_type == 'buy' else 'buy',
+            self.quantity,
+            self.fruit,
+            'to' if self.request_type == 'buy' else 'from',
+            self.sender.name))
