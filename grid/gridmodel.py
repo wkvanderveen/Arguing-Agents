@@ -1,5 +1,5 @@
 import constants
-from random import randint
+from random import randint, shuffle
 from agent import Agent
 
 
@@ -10,8 +10,14 @@ class GridModel(object):
 
     def update(self):
         self.reset_encounters()
-        for agent in self.agents:
-            agent.update()
+
+        indices = list(range(len(self.agents)))
+        shuffle(indices)
+        for index in indices:  # update agents in random order
+            agent = self.agents[index]
+            neighbors = self.check_neighbors(agent)
+            agent.update(neighbors)
+
         self.check_encounters()
         self.start_negotiation()
 
@@ -31,8 +37,29 @@ class GridModel(object):
         for agent in self.agents:
             agent.negotiate()
 
-    def add_agent(self):
+    def check_neighbors(self, agent):
+        dirs = []
+        if self.is_occupied(agent.x, agent.y - 1):
+            dirs.append(constants.NORTH)
+        if self.is_occupied(agent.x + 1, agent.y):
+            dirs.append(constants.EAST)
+        if self.is_occupied(agent.x, agent.y + 1):
+            dirs.append(constants.SOUTH)
+        if self.is_occupied(agent.x - 1, agent.y):
+            dirs.append(constants.WEST)
+        return dirs
+
+    def is_occupied(self, x, y):
+        for agent in self.agents:
+            if agent.x == x and agent.y == y:
+                return True
+        return False
+
+    def get_number_of_agents(self):
+        return len(self.agents)
+
+    def add_agent(self, id):
         x = randint(0, constants.TILES_X - 1)
         y = randint(0, constants.TILES_Y - 1)
-        self.agents.append(Agent(x, y))
+        self.agents.append(Agent(x, y, id))
 

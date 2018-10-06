@@ -6,9 +6,10 @@ import constants
 
 class Agent():
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, agent_id):
         self.x = x
         self.y = y
+        self.agent_id = agent_id
         self.money = constants.MONEY
         self.elasticity = random()  # more elasticity --> accepting lower price
         self.patience = randint(0, constants.MAXPATIENCE)  # More patience --> more negotiation steps
@@ -21,15 +22,17 @@ class Agent():
         for trade_partner in self.encounters:
             pass
 
-    def update(self):
+    def update(self, neighbors):
         # TODO: think about other walking methods than random walk (seek other agent, avoid agents, etc.)
-        self.random_walk()
+        self.random_walk(neighbors)
 
-    def random_walk(self):
-        dx, dy = self.movement(randint(0, 3))
-        while (self.x + dx) < 0 or (self.x + dx) >= constants.TILES_X or (self.y + dy) < 0 or \
-                        (self.y + dy) >= constants.TILES_Y:
-            dx, dy = self.movement(randint(0, 3))
+    def random_walk(self, neighbors):
+        direction = randint(0, 3)
+        dx, dy = self.movement(direction)
+        while (self.x + dx) < 0 or (self.x + dx) >= constants.TILES_X or (self.y + dy) < 0 or (self.y + dy) \
+                >= constants.TILES_Y or direction in neighbors:
+            direction = randint(0, 3)
+            dx, dy = self.movement(direction)
         self.x = self.x + dx
         self.y = self.y + dy
 
@@ -42,14 +45,17 @@ class Agent():
     def no_encounters(self):
         return len(self.encounters)
 
+    def get_id(self):
+        return self.agent_id
+
     @staticmethod
     def movement(direction):
-        if direction == 0:  # NORTH
+        if direction == constants.NORTH:  # NORTH
             return 0, -1
-        elif direction == 1:  # EAST
+        elif direction == constants.EAST:  # EAST
             return 1, 0
-        elif direction == 2:  # SOUTH
+        elif direction == constants.SOUTH:  # SOUTH
             return 0, 1
-        else:  # WEST
+        else:  # (3) WEST
             return -1, 0
 

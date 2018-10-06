@@ -29,7 +29,7 @@ class Grid():
 
         # Add agents
         for i in range(parameters.no_agents):
-            self.model.add_agent()
+            self.model.add_agent(i)
 
         while not crashed:
             # handle input

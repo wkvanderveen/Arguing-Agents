@@ -27,20 +27,28 @@ class GridView(object):
         while y_pos < constants.HEIGHT:
             x_pos = constants.RECTDIST
             while x_pos < constants.WIDTH:
-                pygame.draw.rect(self.screen, constants.BLUE, (x_pos, y_pos, constants.RECTSIZE, constants.RECTSIZE))
+                pygame.draw.rect(self.screen, constants.GREY, (x_pos, y_pos, constants.RECTSIZE, constants.RECTSIZE))
                 x_pos += constants.RECTSIZE + constants.RECTDIST
             y_pos += constants.RECTSIZE + constants.RECTDIST
 
     def draw_agents(self):
         agents = self.model.agents
         for agent in agents:
-            if agent.no_encounters() > 0:
-                color = constants.YELLOW
-            else:
-                color = constants.GREEN
+            color = self.get_color(agent.get_id())
             pygame.draw.rect(self.screen, color, (self.get_grid_pos(agent.x, agent.y)[0],
                                                   self.get_grid_pos(agent.x, agent.y)[1], constants.RECTSIZE - 8,
                                                   constants.RECTSIZE - 8))
+
+    def get_color(self, agent_id):
+        color_range = 180
+
+        color_step = (color_range / (self.model.get_number_of_agents() - 1)) * agent_id
+        r = 65 + color_range - color_step
+        color_step = max(color_step - color_range/2, 0)
+        g = 255
+        b = 65 + color_step
+        return r, g, b
+
 
     @staticmethod
     def get_grid_pos(x, y):
