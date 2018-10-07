@@ -22,8 +22,10 @@ class System():
 
         print("System initialized.")
 
-    def create_agent(self, name, agent_id, no_agents, x, y):
+    def create_agent(self, name, agent_id, no_agents, x=None, y=None):
         """Create a new Agent in the system."""
+        x = randint(0, constants.TILES_X-1) if x == None else x
+        y = randint(0, constants.TILES_Y-1) if y == None else x
         new_agent = Agent(name=name,
                           agent_id=agent_id,
                           no_agents=no_agents,
@@ -63,7 +65,6 @@ class System():
                 agent.random_walk()
 
             elif isinstance(agent.state, WalkToAgentState):
-                # TODO: find best free move to this agent
                 agent.search_agent()
 
         for name, agent in self.agents.items():

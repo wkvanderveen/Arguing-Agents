@@ -6,26 +6,31 @@ from grid import *
 from agentstate import *
 SYSTEM = System()
 
-# Create agents 'Alice' and 'Bob'
-SYSTEM.create_agent(name="Bob", agent_id=0, no_agents=2, x=0, y=0)
-
-SYSTEM.create_agent(name="Alice", agent_id=1, no_agents=2, x=15, y=18)
-# Both agents are now in a RandomWalk state
+# Create agents
+n_agents = 10
+for agent_idx in range(n_agents):
+    SYSTEM.create_agent(name="Agent_{}".format(agent_idx),
+                        agent_id=agent_idx,
+                        no_agents=n_agents)
 
 for i in range(50):
     print("time = {}".format(SYSTEM.time))
-    SYSTEM.agents["Alice"].state.print_info()
-    SYSTEM.agents["Bob"].state.print_info()
 
-    SYSTEM.agents["Alice"].state = WalkToAgentState(this_agent=SYSTEM.agents["Alice"],
-                                                    other_agent=SYSTEM.agents["Bob"])
+    for name, agent in SYSTEM.agents.items():
+        agent.state.print_info()
 
-    ### HARDCODED SEND REQUEST
-    if (SYSTEM.agents["Bob"].adjacent_to_agent(SYSTEM.agents["Alice"])):
-        SYSTEM.agents["Alice"].generate_request(request_type='buy',
-                                                receiver=SYSTEM.agents["Bob"],
-                                                fruit='mango',
-                                                quantity=100)
+    ### HARDCODED SEND REQUEST between adjacent agents
+
+    for name, agent in SYSTEM.agents.items():
+        for name_other, agent_other in SYSTEM.agents.items():
+            if agent.adjacent_to_agent(agent_other) and \
+                isinstance(agent.state, RandomWalkState) and \
+                isinstance(agent_other.state, RandomWalkState):
+                agent.generate_request(request_type='buy',
+                    receiver=agent_other,
+                    fruit='mango',
+                    quantity=100)
+
     ###
 
     if SYSTEM.advance():

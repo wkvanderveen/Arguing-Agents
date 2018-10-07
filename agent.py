@@ -7,6 +7,7 @@ from random import random, randint
 class Agent():
     """docstring for Agent"""
     def __init__(self, name, agent_id, no_agents, x, y, money=0):
+
         self.name = name
         self.state = RandomWalkState(this_agent=self)
         self.money = money
@@ -139,7 +140,7 @@ class Agent():
         elif isinstance(self.state, NegotiationState):
             color = (0, 0, c2)
         elif isinstance(self.state, WaitForResponseState):
-            color = (0, 0, 0)
+            color = (128, 128, 128)
         self.color = color
 
     def get_color(self):
@@ -151,8 +152,11 @@ class Agent():
     def get_current_activity(self):
         return self.current_activity
 
-    @staticmethod
-    def movement(direction):
+    def movement(self, direction):
+        # Do not move if answering 'yes' to a trade request.
+        if 'yes' in [x.response_type for x in self.outgoing_responses]:
+            return 0, 0
+
         if direction == constants.NORTH:  # NORTH
             return 0, -1
         elif direction == constants.EAST:  # EAST
@@ -165,6 +169,9 @@ class Agent():
 
     def generate_request(self, request_type, receiver, fruit, quantity):
         """Generate a buy or sell request for an adjacent agent."""
+        if isinstance(self.state, WaitForResponseState):
+            print("Agent {0} cannot send request ".format(self.name) +
+                  "because it is already waiting for a response!")
         msg = Request(sender=self,
                       request_type=request_type,
                       receiver=receiver,
@@ -176,6 +183,11 @@ class Agent():
 
     def generate_response(self, response_type, receiver, request):
         """Generate an accept or reject response for a requesting agent."""
+
+        # If already negotiating, respond 'no' to everything
+        if isinstance(self.state, NegotiationState):
+            response_type = 'no'
+
         msg = Response(sender=self,
                        response_type=response_type,
                        receiver=receiver,
@@ -191,7 +203,7 @@ class Agent():
             request.on_send()
             self.outgoing_requests.remove(request)
             if isinstance(request.receiver.state, NegotiationState):
-                print("Request blocked -- agent already negotiating!")
+                print("Request blocked -- other agent already negotiating!")
             else:
                 request.receiver.incoming_requests.append(request)
                 requests_sent += 1
@@ -235,10 +247,6 @@ class Agent():
             self.outgoing_responses.remove(response)
             response.receiver.incoming_responses.append(response)
             responses_sent += 1
-            if response.response_type == 'yes':
-                self.state = NegotiationState(this_agent=self,
-                                              buy_or_sell=response.request.request_type,
-                                              other_agent=response.sender)
 
         return responses_sent
 
@@ -251,9 +259,18 @@ class Agent():
             response.on_receive()
             self.incoming_responses.remove(response)
             responses_received += 1
-            if response.response_type == 'yes':
-                self.state = NegotiationState(this_agent=self,
-                                              buy_or_sell=response.request.request_type,
-                                              other_agent=response.sender)
+
+            if response.response_type == 'yes' and \
+                isinstance(self.state, WaitForResponseState) and \
+                not isinstance(response.sender.state, NegotiationState):
+                self.state = NegotiationState(
+                    this_agent=self,
+                    buy_or_sell=response.request.request_type,
+                    other_agent=response.sender)
+
+                response.sender.state = NegotiationState(
+                    this_agent=response.sender,
+                    buy_or_sell=('sell' if response.request.request_type == 'buy' else 'buy'),
+                    other_agent=self)
 
         return responses_received
