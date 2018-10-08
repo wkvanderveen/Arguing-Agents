@@ -56,10 +56,10 @@ class System():
             responses_received += agent.receive_responses()
 
         for name, agent in self.agents.items():
+            agent.set_neighbors(self.get_neighbors(agent))
             if isinstance(agent.state, NegotiationState):
                 # TODO: negotiate process
                 agent.state.duration += 1
-
 
             elif isinstance(agent.state, RandomWalkState):
                 agent.random_walk()
@@ -84,6 +84,22 @@ class System():
         pygame.display.update()
         time.sleep(0.2)
         return self.control.check_events()
+
+    # set the neighbors of an agent (required for preventing agents from walking through each other)
+    def get_neighbors(self, agent):
+        neighbors = [None, None, None, None]  # [North, East, South, West]
+        for name, possible_neighbor in self.agents.items():
+            if possible_neighbor.x == agent.x and possible_neighbor.y == (agent.y - 1):
+                neighbors[constants.NORTH] = possible_neighbor
+            if possible_neighbor.x == (agent.x + 1) and possible_neighbor.y == agent.y:
+                neighbors[constants.EAST] = possible_neighbor
+            if possible_neighbor.x == agent.x and possible_neighbor.y == (agent.y + 1):
+                neighbors[constants.SOUTH] = possible_neighbor
+            if possible_neighbor.x == (agent.x - 1) and possible_neighbor.y == agent.y:
+                neighbors[constants.WEST] = possible_neighbor
+        return neighbors
+
+
 
 
 

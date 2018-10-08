@@ -46,7 +46,6 @@ class Agent():
         elif not self.move_towards_target():
             self.random_walk()
 
-
     def adjacent_to_agent(self, other):
         if (abs(self.x - other.x) + abs(self.y - other.y)) == 1:
             return True

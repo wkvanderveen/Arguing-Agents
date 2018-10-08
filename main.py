@@ -13,7 +13,8 @@ for agent_idx in range(n_agents):
                         agent_id=agent_idx,
                         no_agents=n_agents)
 
-for i in range(50):
+timesteps = 100
+for i in range(timesteps):
     print("time = {}".format(SYSTEM.time))
 
     for name, agent in SYSTEM.agents.items():
