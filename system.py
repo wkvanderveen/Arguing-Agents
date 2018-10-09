@@ -105,16 +105,18 @@ class System():
 
         print("\nAGENT INFO:")
         for name, agent in items:
-            agent.set_neighbors(self.get_neighbors(agent))
             print("incoming: " + str(agent.has_incoming_messages()))
+
+            agent.set_neighbors(self.get_neighbors(agent))
             if isinstance(agent.state, NegotiationState):
                 # TODO: negotiate process
                 agent.state.duration += 1
 
-            elif isinstance(agent.state, RandomWalkState):
+
+            elif isinstance(agent.state, RandomWalkState) and not agent.has_incoming_messages():
                 agent.random_walk()
 
-            elif isinstance(agent.state, WalkToAgentState):
+            elif isinstance(agent.state, WalkToAgentState) and not agent.has_incoming_messages():
                 agent.search_agent(self.find_path(agent))
 
             elif isinstance(agent.state, WaitForResponseState):
