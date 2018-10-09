@@ -164,17 +164,20 @@ class System():
             self.entity_global_price_updates[entity_name]=[price]
 
 
+    #Should only be called when time step changes
     def set_global_average_price_for_all_entities(self):
+        print("Updating Global Average Prices of Entities ")
         for entity_name, prices in self.entity_global_price_updates.items():
             if len(prices)>0:
                 self.entity_global_average_price[entity_name]=(self.entity_global_average_price.get(entity_name,sum(prices)/len(prices))+sum(prices)/len(prices))/2
+                print("\t Updated average price of entity: "+entity_name)
 
             #Add average price to entity trend
             temp_price=self.entity_global_average_price.get(entity_name,None)
             if temp_price:
                 self.add_price_to_entity_trend(entity_name,temp_price)
 
-
+        #Reset this when all the calculation are done
         self.reset_enity_global_price_updates_dict()
 
 

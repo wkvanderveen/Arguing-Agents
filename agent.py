@@ -301,3 +301,10 @@ class Agent():
                     other_agent=self)
 
         return responses_received
+
+
+    def update_entity_quantity(self,entity_name,quantity):
+        self.entities_info[entity_name]['quantity']=quantity
+
+    def is_agent_free(self):
+        return isinstance(self.state,RandomWalkState)
