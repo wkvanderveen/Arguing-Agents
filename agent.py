@@ -43,6 +43,11 @@ class Agent():
     def search_agent(self, directions):
         if self.adjacent_to_agent(self.state.other_agent):
             print("Found target")
+            self.generate_request(request_type='buy',
+                                  receiver=self.state.other_agent,
+                                  fruit='mango',
+                                  quantity=100)
+
         elif not self.move_towards_target(directions):
             self.random_walk()
 

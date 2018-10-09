@@ -5,6 +5,7 @@ from gridmodel import GridModel
 from gridview import GridView
 from gridcontrol import GridControl
 import constants
+from random import choice
 import time
 
 class System():
@@ -156,6 +157,11 @@ class System():
             return constants.INF
         return levels[end]
 
+    def get_random_target(self, agent_id):
+        name, target = choice(list(self.agents.items()))
+        while target.agent_id == agent_id:
+            name, target = choice(list(self.agents.items()))
+        return target
 
     def print_info(self):
         """Print the information about the system."""
