@@ -72,8 +72,8 @@ class ArgumentSet():
     def __price_is_going_down(self):
         return SYSTEM.is_price_going_down(self.entity.name)
 
-    def __agent_is_free(self,agent):
-        pass
+    def __agent_is_free(self):
+        return self.agent2.is_agent_free()
 
     def __agent_is_reachable(self):
         timeleft=timesteps-SYSTEM.time
@@ -87,13 +87,19 @@ class ArgumentSet():
 
     def __agent_has_entity(self):
         if self.type_of_action == 'BUY':
-            return (self.agent2.entities_info[self.entity.name]['isInterested'] and self.agent2.entities_info[self.entity.name]['quantity'])
+            return (self.agent2.entities_info[self.entity.name]['isInterested'] and
+                    self.agent2.entities_info[self.entity.name]['quantity'])
         else:
             return (self.agent1.entities_info[self.entity.name]['isInterested'] and
                     self.agent1.entities_info[self.entity.name]['quantity'])
 
     def __agent_has_cash_for_entity(self):
-        pass
+        if self.type_of_action == 'BUY':
+            agent1_buying_price=self.agent1.get_entity_buying_amount(self.entity.name)
+            return  agent1_buying_price and  self.agent1.money >= agent1_buying_price
+        else:
+            agent2_buying_price = self.agent2.get_entity_buying_amount(self.entity.name)
+            return  agent2_buying_price and  self.agent2.money >= agent2_buying_price
 
 
 #should know all the global variables

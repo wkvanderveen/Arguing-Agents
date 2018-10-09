@@ -55,7 +55,7 @@ class Agent():
                                                  'isInterested':False}
 
     #Randomly set prices for entities related to agent
-    #isInterested Flag tell us that agent is interested in this entity
+    #isInterested Flag tells us that agent is interested in this entity
     def set_entity_info(self,entity):
         self.entities_info[entity.name]={'max_buying_price': randint(10, 100) ,
                                          'min_selling_price': randint(10, 100),
@@ -349,5 +349,26 @@ class Agent():
     def update_entity_quantity(self,entity_name,quantity):
         self.entities_info[entity_name]['quantity']=quantity
 
+    #When state of agent is RandomWalk then agent is free.
     def is_agent_free(self):
         return isinstance(self.state,RandomWalkState)
+
+    #Following 2 functions will return min or max amount of money agent has set to sell or buy entity.
+    #If its not set then None will be returned.
+    def get_entity_buying_amount(self,entity_name):
+        entity_info=self.entities_info.get(entity_name,None)
+        if entity_info:
+            return entity_info['max_buying_price']
+        return None
+
+    def get_entity_selling_amount(self,entity_name):
+        entity_info=self.entities_info.get(entity_name,None)
+        if entity_info:
+            return entity_info['min_selling_price']
+        return None
+
+
+    #This function will update amount agent will have
+    def update_agent_money(self,new_money):
+        self.money=new_money
+
