@@ -5,7 +5,10 @@ from message import BaseMessage
 from grid import *
 from agentstate import *
 from random import random
-SYSTEM = System()
+
+
+display = True
+SYSTEM = System(display)
 
 # Create agents
 n_agents = 20

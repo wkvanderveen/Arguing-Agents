@@ -177,7 +177,6 @@ class Agent():
         else:  # (3) WEST
             return -1, 0
 
-
     def generate_request(self, request_type, receiver, fruit, quantity):
         """Generate a buy or sell request for an adjacent agent."""
         if isinstance(self.state, WaitForResponseState):
@@ -283,5 +282,9 @@ class Agent():
                     this_agent=response.sender,
                     buy_or_sell=('sell' if response.request.request_type == 'buy' else 'buy'),
                     other_agent=self)
+            else:
+                self.state = RandomWalkState(this_agent=self)
+
+
 
         return responses_received

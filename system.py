@@ -5,21 +5,24 @@ from gridmodel import GridModel
 from gridview import GridView
 from gridcontrol import GridControl
 import constants
-from random import choice
+from random import choice, shuffle
 import time
 
 class System():
     """docstring for System"""
 
-    def __init__(self):
+    def __init__(self, display):
         self.time = 0
         self.agents = dict()
+        self.display = display
 
-        pygame.init()
-        pygame.display.set_caption("Grid with agents")
         self.model = GridModel()
-        self.view = GridView(self)
-        self.control = GridControl(self.model)
+
+        if display:
+            pygame.init()
+            pygame.display.set_caption("Grid with agents")
+            self.view = GridView(self)
+            self.control = GridControl(self.model)
 
         print("System initialized.")
 
@@ -46,17 +49,20 @@ class System():
         responses_sent = 0
         responses_received = 0
 
+        items = list(self.agents.items())
+        shuffle(items)
+
         # Let all agents send their messages
-        for name, agent in self.agents.items():
+        for name, agent in items:
             requests_sent += agent.send_requests()
             responses_sent += agent.send_responses()
 
         # Let all agents receive messages
-        for name, agent in self.agents.items():
+        for name, agent in items:
             requests_received += agent.receive_requests()
             responses_received += agent.receive_responses()
 
-        for name, agent in self.agents.items():
+        for name, agent in items:
             agent.set_neighbors(self.get_neighbors(agent))
             if isinstance(agent.state, NegotiationState):
                 # TODO: negotiate process
@@ -68,23 +74,24 @@ class System():
             elif isinstance(agent.state, WalkToAgentState):
                 agent.search_agent(self.find_path(agent))
 
-        for name, agent in self.agents.items():
+        for name, agent in items:
             agent.set_color()
 
         self.time += 1
 
-        # handle input
-        crashed = self.control.check_events()
-
         self.model.update()
+        closed = False
 
         # draw screen
-        self.view.draw()
+        if self.display:
+            self.view.draw()
 
-        # update
-        pygame.display.update()
-        time.sleep(0.2)
-        return self.control.check_events()
+            # update
+            pygame.display.update()
+            time.sleep(0.2)
+            closed = self.control.check_events()
+
+        return closed
 
     # set the neighbors of an agent (required for preventing agents from walking through each other)
     def get_neighbors(self, agent):
