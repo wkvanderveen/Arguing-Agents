@@ -181,6 +181,7 @@ class Agent():
         if isinstance(self.state, WaitForResponseState):
             print("Agent {0} cannot send request ".format(self.name) +
                   "because it is already waiting for a response!")
+
             return
         if isinstance(self.state, NegotiationState):
             return
@@ -283,6 +284,12 @@ class Agent():
 
         return responses_sent
 
+    def has_incoming_messages(self):
+        print(self.incoming_requests)
+        print(self.incoming_responses)
+        if self.incoming_requests or self.incoming_responses:
+            True
+        return False
 
     def receive_responses(self):
         """Receive responses from other agents."""
