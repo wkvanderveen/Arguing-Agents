@@ -41,7 +41,6 @@ class System():
     def advance(self):
         """Advance the time by a value of 1."""
 
-        print("\nUpdating system...\n{}\n".format('-' * 56))
 
         requests_sent = 0
         requests_received = 0
@@ -53,15 +52,18 @@ class System():
         shuffle(items)
 
         # Let all agents send their messages
+        print("\nSENDING MESSAGES:")
         for name, agent in items:
-            requests_sent += agent.send_requests()
+            agent.send_requests()
             responses_sent += agent.send_responses()
 
         # Let all agents receive messages
+        print("\nRECEIVING MESSAGES:")
         for name, agent in items:
             requests_received += agent.receive_requests()
             responses_received += agent.receive_responses()
 
+        print("\nAGENT INFO:")
         for name, agent in items:
             agent.set_neighbors(self.get_neighbors(agent))
             if isinstance(agent.state, NegotiationState):
@@ -76,6 +78,7 @@ class System():
 
         for name, agent in items:
             agent.set_color()
+            agent.state.print_info()
 
         self.time += 1
 
