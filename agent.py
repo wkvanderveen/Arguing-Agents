@@ -285,10 +285,8 @@ class Agent():
         return responses_sent
 
     def has_incoming_messages(self):
-        print(self.incoming_requests)
-        print(self.incoming_responses)
         if self.incoming_requests or self.incoming_responses:
-            True
+            return True
         return False
 
     def receive_responses(self):
