@@ -7,7 +7,7 @@ from agentstate import *
 SYSTEM = System()
 
 # Create agents
-n_agents = 10
+n_agents = 20
 for agent_idx in range(n_agents):
     SYSTEM.create_agent(name="Agent_{}".format(agent_idx),
                         agent_id=agent_idx,
@@ -15,10 +15,8 @@ for agent_idx in range(n_agents):
 
 timesteps = 100
 for i in range(timesteps):
-    print("time = {}".format(SYSTEM.time))
-
-    for name, agent in SYSTEM.agents.items():
-        agent.state.print_info()
+    print("\nUpdating system...\n{}\n".format('-' * 56))
+    SYSTEM.print_info()
 
     ### HARDCODED SEND REQUEST between adjacent agents
 
