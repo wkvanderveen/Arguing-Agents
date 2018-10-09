@@ -7,7 +7,7 @@ from agentstate import *
 SYSTEM = System()
 
 # Create agents
-n_agents = 10
+n_agents = 2
 for agent_idx in range(n_agents):
     SYSTEM.create_agent(name="Agent_{}".format(agent_idx),
                         agent_id=agent_idx,

@@ -2,7 +2,7 @@
 from message import Request, Response
 from agentstate import *
 import constants
-from random import random, randint
+from random import random, randint, shuffle
 
 class Agent():
     """docstring for Agent"""
@@ -40,10 +40,10 @@ class Agent():
           self.name,
           self.position))
 
-    def search_agent(self):
+    def search_agent(self, directions):
         if self.adjacent_to_agent(self.state.other_agent):
             print("Found target")
-        elif not self.move_towards_target():
+        elif not self.move_towards_target(directions):
             self.random_walk()
 
     def adjacent_to_agent(self, other):
@@ -51,14 +51,22 @@ class Agent():
             return True
         return False
 
-    def move_towards_target(self):
+    def move_towards_target(self, bfs_directions):
         # try to move towards target agent. If not possible, return false
-        bf_search = False
+        BFS = True
 
-        if bf_search:
-            dir = bf_search()
-
-            return True
+        if BFS:
+            #  random direction from best directions
+            indices = list(range((len(bfs_directions))))
+            shuffle(indices)
+            for index in indices:
+                if self.cannot_move(bfs_directions[index]):
+                    continue
+                dx, dy = self.movement(bfs_directions[index])
+                self.x = self.x + dx
+                self.y = self.y + dy
+                return True
+            return False
         else:
             dest_x = self.state.other_agent.x
             dest_y = self.state.other_agent.y
@@ -71,7 +79,6 @@ class Agent():
                 self.x = self.x + dx
                 self.y = self.y + dy
                 return True
-
             return False
 
     def set_target(self, agent):
