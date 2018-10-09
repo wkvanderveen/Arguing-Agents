@@ -12,6 +12,8 @@ EAST = 1
 SOUTH = 2
 WEST = 3
 
+INF = 9999999
+
 
 
 # agent parameters

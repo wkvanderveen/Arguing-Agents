@@ -4,6 +4,7 @@ from system import System
 from message import BaseMessage
 from grid import *
 from agentstate import *
+from random import random
 SYSTEM = System()
 
 # Create agents
@@ -21,14 +22,19 @@ for i in range(timesteps):
     ### HARDCODED SEND REQUEST between adjacent agents
 
     for name, agent in SYSTEM.agents.items():
-        for name_other, agent_other in SYSTEM.agents.items():
-            if agent.adjacent_to_agent(agent_other) and \
-                isinstance(agent.state, RandomWalkState) and \
-                isinstance(agent_other.state, RandomWalkState):
-                agent.generate_request(request_type='buy',
-                    receiver=agent_other,
-                    fruit='mango',
-                    quantity=100)
+        if random() < 0.01:
+            if isinstance(agent.state, RandomWalkState):
+                agent.state = WalkToAgentState(this_agent=agent, other_agent=SYSTEM.get_random_target(agent.agent_id))
+        #
+        # for name_other, agent_other in SYSTEM.agents.items():
+        #     if agent.adjacent_to_agent(agent_other) and \
+        #         isinstance(agent.state, RandomWalkState) and \
+        #         isinstance(agent_other.state, RandomWalkState):
+        #         agent.generate_request(request_type='buy',
+        #             receiver=agent_other,
+        #             fruit='mango',
+        #             quantity=100)
+
 
     ###
 

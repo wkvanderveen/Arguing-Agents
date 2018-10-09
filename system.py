@@ -5,6 +5,7 @@ from gridmodel import GridModel
 from gridview import GridView
 from gridcontrol import GridControl
 import constants
+from random import choice
 import time
 
 class System():
@@ -67,7 +68,7 @@ class System():
                 agent.random_walk()
 
             elif isinstance(agent.state, WalkToAgentState):
-                agent.search_agent()
+                agent.search_agent(self.find_path(agent))
 
         for name, agent in self.agents.items():
             agent.set_color()
@@ -102,9 +103,68 @@ class System():
                 neighbors[constants.WEST] = possible_neighbor
         return neighbors
 
+    def agent_at(self, x, y):
+        for name, agent in self.agents.items():
+            if agent.x == x and agent.y == y:
+                return agent
+        return None
 
+    def find_path(self, agent):
+        target = agent.state.other_agent
+        distances = [constants.INF, constants.INF, constants.INF, constants.INF]  # [north, east, south, west]
+        directions = []
 
+        distances[constants.NORTH] = self.bfs((agent.x, agent.y - 1), (target.x, target.y))
+        distances[constants.EAST] = self.bfs((agent.x + 1, agent.y), (target.x, target.y))
+        distances[constants.SOUTH] = self.bfs((agent.x, agent.y + 1), (target.x, target.y))
+        distances[constants.WEST] = self.bfs((agent.x - 1, agent.y), (target.x, target.y))
 
+        min_dist = min(distances)
+
+        if min_dist == constants.INF:
+            return directions
+
+        if distances[constants.NORTH] == min_dist: directions.append(constants.NORTH)
+        if distances[constants.EAST] == min_dist: directions.append(constants.EAST)
+        if distances[constants.SOUTH] == min_dist: directions.append(constants.SOUTH)
+        if distances[constants.WEST] == min_dist: directions.append(constants.WEST)
+
+        return directions
+
+    def bfs(self, start, end):
+        explored = []
+        queue = [start]
+        levels = {}
+        levels[start] = 0
+        visited = [start]
+
+        while queue:
+            pos = queue.pop(0)
+            x = pos[0]
+            y = pos[1]
+            explored.append(pos)
+            neighbors = [(x, y-1), (x+1, y), (x, y+1), (x-1, y)]
+            for neighbor in neighbors:
+                if neighbor[0] < 0 or neighbor[0] >= constants.TILES_X or neighbor[1] < 0 or neighbor[1] \
+                        >= constants.TILES_Y:
+                    continue
+                if self.agent_at(neighbor[0], neighbor[1]) and not neighbor == end:
+                    continue
+                if neighbor not in visited:
+                    queue.append(neighbor)
+                    visited.append(neighbor)
+
+                    levels[neighbor] = levels[pos] + 1
+
+        if end not in levels:  # not a single step could have been taken (impossible position)
+            return constants.INF
+        return levels[end]
+
+    def get_random_target(self, agent_id):
+        name, target = choice(list(self.agents.items()))
+        while target.agent_id == agent_id:
+            name, target = choice(list(self.agents.items()))
+        return target
 
     def print_info(self):
         """Print the information about the system."""
