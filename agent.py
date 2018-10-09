@@ -3,6 +3,7 @@ from message import Request, Response
 from agentstate import *
 import constants
 from random import random, randint
+import json
 
 class Agent():
     """docstring for Agent"""
@@ -26,13 +27,40 @@ class Agent():
         self.elasticity = random()  # more elasticity --> accepting lower price
         self.patience = randint(0, constants.MAXPATIENCE)  # More patience --> more negotiation steps
 
+        self.entities_info={}
+
         self.direction = 0
 
         self.neighbors = [None, None, None, None]
 
         self.set_color()
 
+        self.set_entities_info()
+
         print("Agent '{}' initialized.".format(self.name))
+        #print("\t Agent Entity Info" + json.dumps(self.entities_info))
+
+
+    def set_entities_info(self):
+        from main import SYSTEM
+        all_entities=SYSTEM.get_all_entities()
+        choices=[True,False]
+        for entity in all_entities:
+            if choices[randint(0,1)]:
+                self.set_entity_info(entity)
+            else:
+                self.entities_info[entity.name]={'max_buying_price': None ,
+                                                 'min_selling_price': None,
+                                                 'quantity':None,
+                                                 'isInterested':False}
+
+    #Randomly set prices for entities related to agent
+    #isInterested Flag tell us that agent is interested in this entity
+    def set_entity_info(self,entity):
+        self.entities_info[entity.name]={'max_buying_price': randint(10, 100) ,
+                                         'min_selling_price': randint(10, 100),
+                                         'quantity':randint(1, 10),
+                                         'isInterested':True}
 
     def print_info(self):
         """Print the relevant information about this agent."""
