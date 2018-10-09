@@ -2,8 +2,8 @@
 from message import Request, Response
 from agentstate import *
 import constants
-from random import random, randint
 import json
+from random import random, randint, shuffle
 
 class Agent():
     """docstring for Agent"""
@@ -13,7 +13,7 @@ class Agent():
         self.state = RandomWalkState(this_agent=self)
         self.money = money
         self.incoming_requests = []
-        self.outgoing_requests = []
+        self.outgoing_request = None
         self.incoming_responses = []
         self.outgoing_responses = []
 
@@ -62,16 +62,16 @@ class Agent():
                                          'quantity':randint(1, 10),
                                          'isInterested':True}
 
-    def print_info(self):
-        """Print the relevant information about this agent."""
-        print("This is Agent '{0}' on position {1}.".format(
-          self.name,
-          self.position))
 
-    def search_agent(self):
+    def search_agent(self, directions):
         if self.adjacent_to_agent(self.state.other_agent):
             print("Found target")
-        elif not self.move_towards_target():
+            self.generate_request(request_type='buy',
+                                  receiver=self.state.other_agent,
+                                  fruit='mango',
+                                  quantity=100)
+
+        elif not self.move_towards_target(directions):
             self.random_walk()
 
     def adjacent_to_agent(self, other):
@@ -79,14 +79,22 @@ class Agent():
             return True
         return False
 
-    def move_towards_target(self):
+    def move_towards_target(self, bfs_directions):
         # try to move towards target agent. If not possible, return false
-        bf_search = False
+        BFS = True
 
-        if bf_search:
-            dir = bf_search()
-
-            return True
+        if BFS:
+            #  random direction from best directions
+            indices = list(range((len(bfs_directions))))
+            shuffle(indices)
+            for index in indices:
+                if self.cannot_move(bfs_directions[index]):
+                    continue
+                dx, dy = self.movement(bfs_directions[index])
+                self.x = self.x + dx
+                self.y = self.y + dy
+                return True
+            return False
         else:
             dest_x = self.state.other_agent.x
             dest_y = self.state.other_agent.y
@@ -99,7 +107,6 @@ class Agent():
                 self.x = self.x + dx
                 self.y = self.y + dy
                 return True
-
             return False
 
     def set_target(self, agent):
@@ -180,6 +187,10 @@ class Agent():
         return self.current_activity
 
     def movement(self, direction):
+        # Do no move if receiving incoming requests
+        if self.incoming_requests:
+            return 0, 0
+
         # Do not move if answering 'yes' to a trade request.
         if 'yes' in [x.response_type for x in self.outgoing_responses]:
             return 0, 0
@@ -193,25 +204,32 @@ class Agent():
         else:  # (3) WEST
             return -1, 0
 
-
     def generate_request(self, request_type, receiver, fruit, quantity):
         """Generate a buy or sell request for an adjacent agent."""
         if isinstance(self.state, WaitForResponseState):
             print("Agent {0} cannot send request ".format(self.name) +
                   "because it is already waiting for a response!")
+
+            return
+        if isinstance(self.state, NegotiationState):
+            return
+
         msg = Request(sender=self,
                       request_type=request_type,
                       receiver=receiver,
                       fruit=fruit,
                       quantity=quantity)
 
-        self.outgoing_requests.append(msg)
+        self.state = WaitForResponseState(this_agent=self,
+                                          other_agent=receiver)
+
+        self.outgoing_request = msg
 
 
     def generate_response(self, response_type, receiver, request):
         """Generate an accept or reject response for a requesting agent."""
 
-        # If already negotiating, respond 'no' to everything
+        # Respond 'no' to every request if
         if isinstance(self.state, NegotiationState):
             response_type = 'no'
 
@@ -223,22 +241,26 @@ class Agent():
         self.outgoing_responses.append(msg)
 
     def send_requests(self):
-        """Send all generated requests to the receivers."""
-        requests_sent = 0
+        """Send generated request to the receiver."""
+        # Cannot send requests if agreeing to old request
+        if [x.response_type == 'yes' for x in self.outgoing_responses]:
+            return
 
-        for request in self.outgoing_requests:
+
+        if self.outgoing_request is not None:
+            request = self.outgoing_request
+
             request.on_send()
-            self.outgoing_requests.remove(request)
             if isinstance(request.receiver.state, NegotiationState):
                 print("Request blocked -- other agent already negotiating!")
             else:
                 request.receiver.incoming_requests.append(request)
-                requests_sent += 1
+            self.outgoing_request = None
+
             self.state = WaitForResponseState(
                 this_agent=self,
                 other_agent=request.receiver)
 
-        return requests_sent
 
     def receive_requests(self):
         """Receive requests from other agents."""
@@ -252,16 +274,16 @@ class Agent():
 
             # TODO: Decision making process to generate response
 
-            ### HARDCODE: ANSWER 'YES' TO REQUEST
-            self.generate_response(response_type='yes',
-                                   receiver=request.sender,
-                                   request=request)
+            ### HARDCODE: RANDOM ANSWER TO REQUEST
+            if True:
+                self.generate_response(response_type='yes',
+                                       receiver=request.sender,
+                                       request=request)
+            else:
+                self.generate_response(response_type='no',
+                                       receiver=request.sender,
+                                       request=request)
             ###
-
-            # The agent shouldn't move away before answering the request
-            self.state = WaitForResponseState(
-                this_agent=self,
-                other_agent=request.sender)
 
         return requests_received
 
@@ -275,8 +297,27 @@ class Agent():
             response.receiver.incoming_responses.append(response)
             responses_sent += 1
 
+            if isinstance(self.state, NegotiationState) or \
+               isinstance(response.receiver.state, NegotiationState):
+                response.response_type = 'no'
+
+
+            if response.response_type == 'yes' and \
+                not isinstance(response.receiver.state, NegotiationState):
+                self.state = NegotiationState(
+                    this_agent=self,
+                    buy_or_sell=('sell' if response.request.request_type == 'buy' else 'buy'),
+                    other_agent=response.receiver)
+
+
         return responses_sent
 
+    def has_incoming_messages(self):
+        print(self.incoming_requests)
+        print(self.incoming_responses)
+        if self.incoming_requests or self.incoming_responses:
+            True
+        return False
 
     def receive_responses(self):
         """Receive responses from other agents."""
@@ -286,19 +327,21 @@ class Agent():
             response.on_receive()
             self.incoming_responses.remove(response)
             responses_received += 1
+            if not isinstance(self.state, WaitForResponseState):
+                continue
 
-            if response.response_type == 'yes' and \
-                isinstance(self.state, WaitForResponseState) and \
-                not isinstance(response.sender.state, NegotiationState):
+            if response.response_type == 'yes':
                 self.state = NegotiationState(
                     this_agent=self,
                     buy_or_sell=response.request.request_type,
                     other_agent=response.sender)
-
                 response.sender.state = NegotiationState(
                     this_agent=response.sender,
                     buy_or_sell=('sell' if response.request.request_type == 'buy' else 'buy'),
                     other_agent=self)
+            else:
+                self.state = RandomWalkState(this_agent=self)
+                break
 
         return responses_received
 

@@ -30,6 +30,7 @@ class WaitForResponseState(AgentState):
     def __init__(self, other_agent, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.other_agent = other_agent
+        self.counter = 2
 
     def print_info(self):
         print("Agent {0} is waiting for a response from agent {1}.".format(
