@@ -1,6 +1,21 @@
 """ docstring placeholder """
+import functools
+
+
+class WffCreationValdatior():
+    def __init__(self, argument):
+        self.arg = argument
+
+    def __call__(self, fn):
+        @functools.wraps(fn)
+        def decorated(*args, **kwargs):
+            print("Args:", *args)
+            print("Kwargs:", **kwargs)
+            fn(*args, **kwargs)
+        return decorated
 
 class Wff():
+
     def __init__(self, wff_type=None, times=[], terms=[],
             predicate=[None, None], wffs=[], agents=[], bdig=None,
             preference=None, message=None, send_receive=None, *args,
@@ -92,7 +107,9 @@ class Wff():
                 .format(self.times[0], self.send_receive, self.agents[0].name,
                         self.agents[1].name, self.message.convert_to_string())
 
-
+    # @WffCreationValdatior
+    # def create_wff(self,a=1,b=2):
+    #     pass
 
     def __eq__(self, other):
         return self.convert_to_string() == other.convert_to_string()

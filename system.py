@@ -7,9 +7,40 @@ from gridcontrol import GridControl
 import constants
 from random import choice, shuffle
 import time
+import collections
 
+import json
+
+
+class Entity():
+    def __init__(self,name):
+        self.name=name
+
+
+#This class will store last three prices of the entity.
+class EntityTimeSeries():
+    def __init__(self,entity_name):
+        self.max_lenght = 3
+        self.entity_name=entity_name
+        self.last_prices=collections.deque([], self.max_lenght) # will only keep last three prices
+
+    def is_price_going_down(self):
+        s=zip(list(self.last_prices), list(self.last_prices[1:]))
+        return all([all(x>y for x, y in s),True if len(s)>0 else False])
+
+    def is_prince_going_up(self):
+        s=zip(list(self.last_prices), list(self.last_prices[1:]))
+        return all([all(x<y for x, y in s),True if len(s)>0 else False])
+
+    def add_price_to_time_series(self,price):
+        self.last_prices.append(price)
+
+
+
+#We can convert SYSTEM class to singleton
 class System():
     """docstring for System"""
+
 
     def __init__(self, display):
         self.time = 0
@@ -23,6 +54,14 @@ class System():
             pygame.display.set_caption("Grid with agents")
             self.view = GridView(self)
             self.control = GridControl(self.model)
+
+        self.entities = [Entity(x) for x in constants.FRUITS]
+        self.entity_global_average_price = {}
+
+        self.price_trends={}
+
+        #This is a dict to maintain price update requests coming from system in the given time step
+        self.entity_global_price_updates={}
 
         print("System initialized.")
 
@@ -48,6 +87,7 @@ class System():
         responses_sent = 0
         responses_received = 0
 
+        self.set_global_average_price_for_all_entities() # Update global average price collected in the last step.
         items = list(self.agents.items())
         shuffle(items)
 
@@ -118,6 +158,68 @@ class System():
             if possible_neighbor.x == (agent.x - 1) and possible_neighbor.y == agent.y:
                 neighbors[constants.WEST] = possible_neighbor
         return neighbors
+
+
+
+    #This will return current global price of the entity
+    def get_entity_global_average_price(self,entity_name):
+        return self.entity_global_average_price.get(entity_name,None)
+
+    #This will return list of all entities in the System
+    def get_all_entities(self):
+        return self.entities
+
+    #This will return all agents in a list other than agents in except list
+    def get_all_agents_in_list(self,except_agents=[]):
+        return [agent for name,agent in self.agents.items() if name not in except_agents]
+
+    #To set global average price of entity
+    def update_entity_global_average_price(self,entity_name,price):
+        if entity_name in self.entity_global_price_updates.keys():
+            self.entity_global_price_updates[entity_name].append(price)
+        else:
+            self.entity_global_price_updates[entity_name]=[price]
+
+
+    #Should only be called when time step changes
+    def set_global_average_price_for_all_entities(self):
+        print("Updating Global Average Prices of Entities ")
+        for entity_name, prices in self.entity_global_price_updates.items():
+            if len(prices)>0:
+                self.entity_global_average_price[entity_name]=(self.entity_global_average_price.get(entity_name,sum(prices)/len(prices))+sum(prices)/len(prices))/2
+                print("\t Updated average price of entity: "+entity_name)
+
+            #Add average price to entity trend
+            temp_price=self.entity_global_average_price.get(entity_name,None)
+            if temp_price:
+                self.add_price_to_entity_trend(entity_name,temp_price)
+
+        #Reset this when all the calculation are done
+        self.reset_enity_global_price_updates_dict()
+
+
+    def add_price_to_entity_trend(self,entity_name,price):
+        entity_trend = self.price_trends.get(entity_name, None)
+        if not entity_trend:
+            self.price_trends[entity_name] = EntityTimeSeries(entity_name)
+            entity_trend = self.price_trends[entity_name]
+        entity_trend.add_price_to_time_series(price)
+
+
+    def reset_enity_global_price_updates_dict(self):
+        self.enity_global_price_updates=dict()
+
+
+    def is_price_going_up(self,entity_name):
+        entity_trend = self.price_trends.get(entity_name,None)
+        return all(entity_trend,entity_trend.is_prince_going_up())
+
+    def is_price_going_down(self,entity_name):
+        entity_trend = self.price_trends.get(entity_name, None)
+        return all(entity_trend, entity_trend.is_prince_going_down())
+
+
+
 
     def agent_at(self, x, y):
         for name, agent in self.agents.items():

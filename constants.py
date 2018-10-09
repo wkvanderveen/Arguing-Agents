@@ -36,3 +36,9 @@ TILES_Y = 10  # number of tiles in each column
 
 WIDTH = TILES_X * (RECTDIST + RECTSIZE) + RECTDIST
 HEIGHT = TILES_Y * (RECTDIST + RECTSIZE) + RECTDIST
+
+
+FRUITS=["MANGOES",
+        "ORANGES",
+        "APPLES",
+        "BANANAS"]
