@@ -1,6 +1,5 @@
 import pygame
 import constants
-# from gridmodel import GridModel
 
 
 class GridView(object):
@@ -8,8 +7,8 @@ class GridView(object):
     FONTSIZE = 20
     BACKGROUNDCOLOR = constants.WHITE
 
-    def __init__(self, model):
-        self.model = model
+    def __init__(self, system):
+        self.system = system
         self.screen = pygame.display.set_mode((constants.WIDTH, constants.HEIGHT))
         pygame.font.init()
         self.font = pygame.font.SysFont('fontawesome5free',self.FONTSIZE)
@@ -27,20 +26,21 @@ class GridView(object):
         while y_pos < constants.HEIGHT:
             x_pos = constants.RECTDIST
             while x_pos < constants.WIDTH:
-                pygame.draw.rect(self.screen, constants.BLUE, (x_pos, y_pos, constants.RECTSIZE, constants.RECTSIZE))
+                pygame.draw.rect(self.screen, constants.GREY, (x_pos, y_pos, constants.RECTSIZE, constants.RECTSIZE))
                 x_pos += constants.RECTSIZE + constants.RECTDIST
             y_pos += constants.RECTSIZE + constants.RECTDIST
 
     def draw_agents(self):
-        agents = self.model.agents
-        for agent in agents:
-            if agent.no_encounters() > 0:
-                color = constants.YELLOW
-            else:
-                color = constants.GREEN
-            pygame.draw.rect(self.screen, color, (self.get_grid_pos(agent.x, agent.y)[0],
-                                                  self.get_grid_pos(agent.x, agent.y)[1], constants.RECTSIZE - 8,
-                                                  constants.RECTSIZE - 8))
+        agents = self.system.agents
+        for name, agent in agents.items():
+            color = agent.get_color()
+            pos = self.get_grid_pos(agent.x, agent.y)
+            pygame.draw.rect(self.screen, color, (pos[0], pos[1], constants.RECTSIZE - 8, constants.RECTSIZE - 8))
+            text = str(agent.get_id())
+            font = self.font
+            text = font.render(text, True, constants.BLACK)
+            self.screen.blit(text, (pos[0], pos[1]))
+
 
     @staticmethod
     def get_grid_pos(x, y):

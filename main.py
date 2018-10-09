@@ -1,93 +1,42 @@
 """Docstring for main.py"""
 
 from system import System
-from message import RequestMessage
-from wff import Wff
+from message import BaseMessage
+from grid import *
+from agentstate import *
 SYSTEM = System()
 
+# Create agents
+n_agents = 10
+for agent_idx in range(n_agents):
+    SYSTEM.create_agent(name="Agent_{}".format(agent_idx),
+                        agent_id=agent_idx,
+                        no_agents=n_agents)
 
+timesteps = 100
+for i in range(timesteps):
+    print("time = {}".format(SYSTEM.time))
 
-# Create agents 'Alice' and 'Bob'
-SYSTEM.create_agent(name="Alice",
-                    beliefs=[],
-                    desires=[],
-                    intentions=[],
-                    goals=[])
+    for name, agent in SYSTEM.agents.items():
+        agent.state.print_info()
 
-SYSTEM.create_agent(name="Bob",
-                    beliefs=[],
-                    desires=[],
-                    intentions=[],
-                    goals=[])
+    ### HARDCODED SEND REQUEST between adjacent agents
 
-alices_goal_friends = Wff(wff_type='predicate',
-                          times=[0],
-                          predicate=['Do', "be.friends"],
-                          agents=[SYSTEM.agents["Bob"]],
-                          )
+    for name, agent in SYSTEM.agents.items():
+        for name_other, agent_other in SYSTEM.agents.items():
+            if agent.adjacent_to_agent(agent_other) and \
+                isinstance(agent.state, RandomWalkState) and \
+                isinstance(agent_other.state, RandomWalkState):
+                agent.generate_request(request_type='buy',
+                    receiver=agent_other,
+                    fruit='mango',
+                    quantity=100)
 
-alices_goal_not_friends = Wff(wff_type='not',
-                              wffs=[alices_goal_friends]
-                          )
+    ###
 
-alices_goal = Wff(wff_type='bdig',
-                  times=[0],
-                  predicate=['Goal'],
-                  agents=[SYSTEM.agents["Alice"]],
-                  wffs=[alices_goal_friends])
+    if SYSTEM.advance():
+        print("Aborted system!")
+        break
 
-alices_belief_bob_use_printer = Wff(wff_type='predicate',
-                                    times=[0],
-                                    predicate=['Do', "use.printer"],
-                                    agents=[SYSTEM.agents["Bob"]])
-
-alices_belief_implies = Wff(wff_type='implies',
-                            wffs=[alices_belief_bob_use_printer,
-                                  alices_goal_friends])
-
-alices_belief = Wff(wff_type='bdig',
-                    times=[0],
-                    predicate=['Bel'],
-                    agents=[SYSTEM.agents["Alice"]],
-                    wffs=[alices_belief_implies])
-
-bobs_goal_use_printer = Wff(wff_type='predicate',
-                            times=[0],
-                            predicate=['Do', "use.printer"],
-                            agents=[SYSTEM.agents["Bob"]])
-
-bobs_goal = Wff(wff_type='bdig',
-                times=[0],
-                predicate=['Goal'],
-                agents=[SYSTEM.agents["Bob"]],
-                wffs=[bobs_goal_use_printer])
-
-bobs_intention_friends = Wff(wff_type='predicate',
-                             times=[0],
-                             predicate=['Do', "be.friends"],
-                             agents=[SYSTEM.agents["Bob"]])
-
-bobs_intention = Wff(wff_type='bdig',
-                     times=[0],
-                     predicate=['Int'],
-                     agents=[SYSTEM.agents["Bob"]],
-                     wffs=[bobs_intention_friends])
-
-SYSTEM.agents["Alice"].beliefs.append(alices_belief)
-SYSTEM.agents["Alice"].goals.append(alices_goal)
-
-SYSTEM.agents["Bob"].goals.append(bobs_goal)
-SYSTEM.agents["Bob"].intentions.append(bobs_intention)
-
-SYSTEM.agents["Alice"].print_info()
-
-SYSTEM.agents["Bob"].print_info()
-
-SYSTEM.agents["Bob"].generate_message(time=SYSTEM.time,
-                                      type_of_message='REQUEST',
-                                      recipient=SYSTEM.agents["Alice"],
-                                      sentence=bobs_goal_use_printer,
-                                      argument=bobs_intention_friends)
-
-SYSTEM.advance()
-SYSTEM.advance()
+pygame.quit()
+quit()
