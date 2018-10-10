@@ -1,5 +1,5 @@
 
-from main import SYSTEM,timesteps
+from main import SYSTEM, timesteps
 '''
 
 
@@ -38,7 +38,7 @@ Valid Argument set for buying E1 from A2 , by A1 - > [
     AgentHasCashForEntity(E1,A1)-> True, (should be >= maximum one unit price of E1 at which agent 1 is willing to buy)
     MarketIsClosing->False (Not necessary because we have implemented agent is reachable.)
     ]
-    
+
 
 Valid Argument set for selling E1 to A2 , by A1- > [
     PriceIsGoingDown(E1)->False,<current price E1>,
@@ -62,8 +62,8 @@ class Action():
 
 class ArgumentSet():
     def __init__(self,type_of_action,agent1,agent2,entity):
-        self.type_of_action=type_of_action #Type of action are two , buy or sell.
-        self.agent1=agent1#This will be asking agent
+        self.type_of_action=type_of_action  # Type of action are two , buy or sell.
+        self.agent1=agent1  # This will be asking agent
         self.agent2=agent2
         self.entity=entity
 

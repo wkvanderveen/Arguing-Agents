@@ -11,13 +11,13 @@ display = True
 SYSTEM = System(display)
 
 # Create agents
-n_agents = 20
+n_agents = 50
 for agent_idx in range(n_agents):
     SYSTEM.create_agent(name="Agent_{}".format(agent_idx),
                         agent_id=agent_idx,
                         no_agents=n_agents)
 
-timesteps = 100
+timesteps = 1000
 for i in range(timesteps):
     print("\nUpdating system...\n{}\n".format('-' * 56))
     SYSTEM.print_info()
@@ -25,7 +25,7 @@ for i in range(timesteps):
     ### HARDCODED SEND REQUEST between adjacent agents
 
     for name, agent in SYSTEM.agents.items():
-        if random() < 0.01:
+        if random() < 0.002 :
             if isinstance(agent.state, RandomWalkState):
                 agent.state = WalkToAgentState(this_agent=agent, other_agent=SYSTEM.get_random_target(agent.agent_id))
         #

@@ -19,6 +19,7 @@ class Agent():
 
         self.x = x
         self.y = y
+        self.freeze_movement = False
 
         self.agent_id = agent_id
         self.no_agents = no_agents
@@ -188,7 +189,7 @@ class Agent():
 
     def movement(self, direction):
         # Do no move if receiving incoming requests
-        if self.incoming_requests:
+        if self.has_incoming_messages() or self.freeze_movement:
             return 0, 0
 
         # Do not move if answering 'yes' to a trade request.
@@ -220,9 +221,6 @@ class Agent():
                       fruit=fruit,
                       quantity=quantity)
 
-        self.state = WaitForResponseState(this_agent=self,
-                                          other_agent=receiver)
-
         self.outgoing_request = msg
 
 
@@ -245,7 +243,6 @@ class Agent():
         # Cannot send requests if agreeing to old request
         if [x.response_type == 'yes' for x in self.outgoing_responses]:
             return
-
 
         if self.outgoing_request is not None:
             request = self.outgoing_request
@@ -276,13 +273,16 @@ class Agent():
 
             ### HARDCODE: RANDOM ANSWER TO REQUEST
             if True:
-                self.generate_response(response_type='yes',
-                                       receiver=request.sender,
-                                       request=request)
+                response_type = 'yes'
             else:
-                self.generate_response(response_type='no',
-                                       receiver=request.sender,
-                                       request=request)
+                response_type = 'no'
+
+            self.generate_response(response_type=response_type,
+                                   receiver=request.sender,
+                                   request=request)
+
+            if response_type == 'yes':
+                self.freeze_movement = True
             ###
 
         return requests_received
@@ -313,9 +313,7 @@ class Agent():
         return responses_sent
 
     def has_incoming_messages(self):
-        if self.incoming_requests or self.incoming_responses:
-            return True
-        return False
+        return (self.incoming_requests or self.incoming_responses)
 
     def receive_responses(self):
         """Receive responses from other agents."""

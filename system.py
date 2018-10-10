@@ -105,8 +105,6 @@ class System():
 
         print("\nAGENT INFO:")
         for name, agent in items:
-            print("incoming: " + str(agent.has_incoming_messages()))
-
             agent.set_neighbors(self.get_neighbors(agent))
             if isinstance(agent.state, NegotiationState):
                 # TODO: negotiate process
@@ -128,6 +126,7 @@ class System():
         for name, agent in self.agents.items():
             agent.set_color()
             agent.state.print_info()
+            agent.freeze_movement = False
 
         self.time += 1
 

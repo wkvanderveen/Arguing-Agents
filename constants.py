@@ -31,8 +31,8 @@ RECTDIST = 1  # size of borders between tiles
 RECTSIZE = 40  # size of tiles
 MAX_UPDATES_PER_S = 10
 
-TILES_X = 10  # number of tiles on each row
-TILES_Y = 10  # number of tiles in each column
+TILES_X = 25  # number of tiles on each row
+TILES_Y = 25  # number of tiles in each column
 
 WIDTH = TILES_X * (RECTDIST + RECTSIZE) + RECTDIST
 HEIGHT = TILES_Y * (RECTDIST + RECTSIZE) + RECTDIST
