@@ -14,11 +14,12 @@ WEST = 3
 
 INF = 9999999
 
-
+N_AGENTS = 20
+MAX_TIME = 300
 
 # agent parameters
 MONEY = 500.0  # initial money of an agent
-MAXPATIENCE = 10  # maximum patience an agent has
+MAXPATIENCE = 20  # maximum patience an agent has
 
 RANDOM_WALK = 0
 SEARCH_AGENT = 1
@@ -31,8 +32,8 @@ RECTDIST = 1  # size of borders between tiles
 RECTSIZE = 40  # size of tiles
 MAX_UPDATES_PER_S = 10
 
-TILES_X = 25  # number of tiles on each row
-TILES_Y = 25  # number of tiles in each column
+TILES_X = 15  # number of tiles on each row
+TILES_Y = 15  # number of tiles in each column
 
 WIDTH = TILES_X * (RECTDIST + RECTSIZE) + RECTDIST
 HEIGHT = TILES_Y * (RECTDIST + RECTSIZE) + RECTDIST

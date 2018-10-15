@@ -3,7 +3,7 @@ from message import Request, Response
 from agentstate import *
 import constants
 import json
-from random import random, randint, shuffle
+from random import random, randint, shuffle, uniform
 
 class Agent():
     """docstring for Agent"""
@@ -26,7 +26,7 @@ class Agent():
 
         self.money = constants.MONEY
         self.elasticity = random()  # more elasticity --> accepting lower price
-        self.patience = randint(0, constants.MAXPATIENCE)  # More patience --> more negotiation steps
+        self.patience = randint(5, constants.MAXPATIENCE)  # More patience --> more negotiation steps
 
         self.entities_info={}
 
@@ -47,7 +47,8 @@ class Agent():
         all_entities=SYSTEM.get_all_entities()
         choices=[True,False]
         for entity in all_entities:
-            if choices[randint(0,1)]:
+            #if choices[randint(0,1)]:
+            if True:
                 self.set_entity_info(entity)
             else:
                 self.entities_info[entity.name]={'max_buying_price': None ,
@@ -58,8 +59,8 @@ class Agent():
     #Randomly set prices for entities related to agent
     #isInterested Flag tells us that agent is interested in this entity
     def set_entity_info(self,entity):
-        self.entities_info[entity.name]={'max_buying_price': randint(10, 100) ,
-                                         'min_selling_price': randint(10, 100),
+        self.entities_info[entity.name]={'max_buying_price': randint(40, 55) ,
+                                         'min_selling_price': randint(45, 60),
                                          'quantity':randint(1, 10),
                                          'isInterested':True}
 
@@ -67,10 +68,13 @@ class Agent():
     def search_agent(self, directions):
         if self.adjacent_to_agent(self.state.other_agent):
             print("Found target")
+            # HARDCODED: generate request
             self.generate_request(request_type='buy',
                                   receiver=self.state.other_agent,
-                                  fruit='mango',
-                                  quantity=100)
+                                  fruit='MANGOES',
+                                  quantity=randint(1, 10),
+                                  price_each=randint(int(self.entities_info['MANGOES']['min_selling_price']*uniform(0.5, 0.9)),
+                                                     int(self.entities_info['MANGOES']['min_selling_price']*(1+random()))))
 
         elif not self.move_towards_target(directions):
             self.random_walk()
@@ -205,7 +209,7 @@ class Agent():
         else:  # (3) WEST
             return -1, 0
 
-    def generate_request(self, request_type, receiver, fruit, quantity):
+    def generate_request(self, request_type, receiver, fruit, quantity, price_each):
         """Generate a buy or sell request for an adjacent agent."""
         if isinstance(self.state, WaitForResponseState):
             print("Agent {0} cannot send request ".format(self.name) +
@@ -219,7 +223,8 @@ class Agent():
                       request_type=request_type,
                       receiver=receiver,
                       fruit=fruit,
-                      quantity=quantity)
+                      quantity=quantity,
+                      price_each=price_each)
 
         self.outgoing_request = msg
 
@@ -301,15 +306,6 @@ class Agent():
                isinstance(response.receiver.state, NegotiationState):
                 response.response_type = 'no'
 
-
-            if response.response_type == 'yes' and \
-                not isinstance(response.receiver.state, NegotiationState):
-                self.state = NegotiationState(
-                    this_agent=self,
-                    buy_or_sell=('sell' if response.request.request_type == 'buy' else 'buy'),
-                    other_agent=response.receiver)
-
-
         return responses_sent
 
     def has_incoming_messages(self):
@@ -330,11 +326,17 @@ class Agent():
                 self.state = NegotiationState(
                     this_agent=self,
                     buy_or_sell=response.request.request_type,
-                    other_agent=response.sender)
+                    other_agent=response.sender,
+                    quantity=response.request.quantity,
+                    fruit=response.request.fruit,
+                    price_each=response.request.price_each)
                 response.sender.state = NegotiationState(
                     this_agent=response.sender,
                     buy_or_sell=('sell' if response.request.request_type == 'buy' else 'buy'),
-                    other_agent=self)
+                    other_agent=self,
+                    quantity=response.request.quantity,
+                    fruit=response.request.fruit,
+                    price_each=response.request.price_each)
             else:
                 self.state = RandomWalkState(this_agent=self)
                 break

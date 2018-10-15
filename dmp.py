@@ -1,8 +1,6 @@
 
 from main import SYSTEM, timesteps
 '''
-
-
 types_of_actions = [
     'Buy',
     'Sell'
@@ -17,11 +15,7 @@ types_of_base = [
     'AgentHasCashForEntity',#will take agent and entity
     'MarketIsClosing',  # will be if global time is left only last 10%
 ]
-'''
 
-
-
-'''
 Sample Arguments
 ----------------
 
@@ -38,7 +32,6 @@ Valid Argument set for buying E1 from A2 , by A1 - > [
     AgentHasCashForEntity(E1,A1)-> True, (should be >= maximum one unit price of E1 at which agent 1 is willing to buy)
     MarketIsClosing->False (Not necessary because we have implemented agent is reachable.)
     ]
-
 
 Valid Argument set for selling E1 to A2 , by A1- > [
     PriceIsGoingDown(E1)->False,<current price E1>,
@@ -66,8 +59,6 @@ class ArgumentSet():
         self.agent1=agent1  # This will be asking agent
         self.agent2=agent2
         self.entity=entity
-
-
 
     def __price_is_going_down(self):
         return SYSTEM.is_price_going_down(self.entity.name)

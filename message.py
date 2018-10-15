@@ -44,11 +44,12 @@ class Response(BaseMessage):
 
 
 class Request(BaseMessage):
-    def __init__(self, request_type, fruit, quantity, *args, **kwargs):
+    def __init__(self, request_type, fruit, quantity, price_each, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.request_type = request_type
         self.fruit = fruit
         self.quantity = quantity
+        self.price_each = price_each
 
     def on_send(self):
         print("{0} sent request to {1} {2} {3} {4} {5}".format(
