@@ -115,12 +115,26 @@ class DecisionMakingProcess():
 
 
     def create_buying_arguments_for_agent(self):
+        buying_arguments=[]
         all_other_agents=SYSTEM.get_all_agents_in_list(except_agents=[self.asking_agent])
         all_entities=SYSTEM.get_all_entities()
-        return []
+
+        for agent in all_other_agents:
+            for entity in all_entities:
+                buying_arguments.append(ArgumentSet('BUY',self.asking_agent,agent,entity))
+
+        return buying_arguments
 
     def create_selling_arguments_for_agent(self):
-        return []
+        selling_arguments = []
+        all_other_agents = SYSTEM.get_all_agents_in_list(except_agents=[self.asking_agent])
+        all_entities = SYSTEM.get_all_entities()
+
+        for agent in all_other_agents:
+            for entity in all_entities:
+                selling_arguments.append(ArgumentSet('SELL', self.asking_agent, agent, entity))
+
+        return selling_arguments
 
 
     def filter_out_valid_arguments(self):
@@ -130,7 +144,13 @@ class DecisionMakingProcess():
         #AgentHasEnity
         #AgentHasCashForEntity
 
-        self.valid_arguments=[]
+        self.valid_buying_arguments=filter(lambda x: x.__agent_is_free() and
+                                                     x.__agent_is_reachable() and x.__agent_has_entity() and x.__agent_has_cash_for_entity()
+                                           , self.all_buying_arguments)
+        self.valid_selling_arguments=filter(lambda x: x.__agent_is_free() and
+                                                     x.__agent_is_reachable() and x.__agent_has_entity() and x.__agent_has_cash_for_entity()
+                                           , self.all_selling_arguments)
+
 
     def resolve_conflict(self):
         pass
