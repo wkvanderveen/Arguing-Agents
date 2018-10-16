@@ -86,7 +86,7 @@ class Agent():
                                       int(self.entities_info[entity_name]['min_selling_price'] * uniform(0.5, 0.9)),
                                       int(self.entities_info[entity_name]['min_selling_price'] * (1 + random())))
 
-                                  )
+                                  )#ToDo: Check what is price_each.
 
 
             # self.generate_request(request_type='buy',

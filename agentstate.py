@@ -52,7 +52,7 @@ class NegotiationState(AgentState):
 
 
         SYSTEM.update_negotiation_happened(self.this_agent.agent_id, self.other_agent.agent_id,
-                                           False)  # This means positive negotiation happend
+                                           True)  # This means positive negotiation happend
 
         SYSTEM.update_entity_global_average_price(self.fruit,self.price_each,self.quantity)
 

@@ -158,15 +158,34 @@ class ArgumentSet():
 
             self.score= (self.part_0+part_a+part_b+part_c)/float(distance)
 
+            self.part_a=part_a
+            self.part_b=part_b
+            self.part_c=part_c
+            self.md=float(distance)
+
+
     def __repr__(self):
         return "Action: {}, " \
-               "Asking Agent: {}, " \
-               "Sent To Agent: {}," \
-               "Entity: {}, Score: {}".format(self.type_of_action,
+               "(Asking Agent: {}({},{})), " \
+               "(Sent To Agent: {}({},{}))," \
+               "Entity: {}, " \
+               "Score: {}, " \
+               "PartA: {}, " \
+               "PartB: {}, " \
+               "PartC: {}, " \
+               "Distance: {}".format(self.type_of_action,
                                   self.agent1.name,
+                                  self.agent1.x,
+                                  self.agent1.y,
                                   self.agent2.name,
+                                  self.agent2.x,
+                                  self.agent2.y,
                                   self.entity.name,
-                                  self.score
+                                  self.score,
+                                  self.part_a,
+                                  self.part_b,
+                                  self.part_c,
+                                  self.md
                                   )
 
 
@@ -188,7 +207,7 @@ class DecisionMakingProcess():
 
     def create_buying_arguments_for_agent(self):
         buying_arguments=[]
-        all_other_agents=SYSTEM.get_all_agents_in_list(except_agents=[self.asking_agent])
+        all_other_agents=SYSTEM.get_all_agents_in_list(except_agents=[self.asking_agent.name])
         all_entities=SYSTEM.get_all_entities()
 
         for agent in all_other_agents:
@@ -199,7 +218,7 @@ class DecisionMakingProcess():
 
     def create_selling_arguments_for_agent(self):
         selling_arguments = []
-        all_other_agents = SYSTEM.get_all_agents_in_list(except_agents=[self.asking_agent])
+        all_other_agents = SYSTEM.get_all_agents_in_list(except_agents=[self.asking_agent.name])
         all_entities = SYSTEM.get_all_entities()
 
         for agent in all_other_agents:
