@@ -7,6 +7,8 @@ from agentstate import *
 from random import random
 import constants
 import pygame
+import copy
+import json
 
 
 display = True
@@ -21,6 +23,8 @@ for agent_idx in range(constants.N_AGENTS):
 
 
 SYSTEM.initialize_total_negotiations_count()
+
+agents_at_start=copy.deepcopy(SYSTEM.agents)
 
 
 
@@ -51,6 +55,16 @@ for i in range(constants.MAX_TIME):
     if SYSTEM.advance():
         print("Aborted system!")
         break
+
+agents_at_end=copy.deepcopy(SYSTEM.agents)
+
+print("Agents At Start")
+for n,a in agents_at_start.items():
+    print(n,a.money,json.dumps(a.entities_info))
+
+print("\n Agent At End")
+for n,a in agents_at_end.items():
+    print(n,a.money,json.dumps(a.entities_info))
 
 pygame.quit()
 quit()
