@@ -49,8 +49,8 @@ class Agent():
         all_entities=SYSTEM.get_all_entities()
         choices=[True,False]
         for entity in all_entities:
-            # if choices[randint(0,1)]:
-            if True:
+            if choices[randint(0,1)]:
+            # if True:
                 self.set_entity_info(entity)
             else:
                 self.entities_info[entity.name]={'max_buying_price': None ,

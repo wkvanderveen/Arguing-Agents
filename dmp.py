@@ -279,7 +279,7 @@ class DecisionMakingProcess():
         if wining_argument:
             return Action(wining_argument.type_of_action,wining_argument.agent1,wining_argument.agent2,wining_argument.entity)
 
-        print("****** NO ARGUENT FOUND *******")
+        print("****** NO ARGUMENT FOUND *******")
         return None
 
 

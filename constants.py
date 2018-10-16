@@ -14,8 +14,8 @@ WEST = 3
 
 INF = 9999999
 
-N_AGENTS = 5
-MAX_TIME = 30
+N_AGENTS = 7
+MAX_TIME = 100
 
 # agent parameters
 MONEY = 500.0  # initial money of an agent
@@ -42,4 +42,12 @@ HEIGHT = TILES_Y * (RECTDIST + RECTSIZE) + RECTDIST
 FRUITS=["MANGOES",
         "ORANGES",
         "APPLES",
-        "BANANAS"]
+        "BANANAS",
+        "STRAWBERRIES",
+        "BLUEBERRIES",
+        "TOMATOS",
+        "PAPAYAS",
+        "PINEAPPLES",
+        "GRAPES",
+        "LEMONS",
+        ]

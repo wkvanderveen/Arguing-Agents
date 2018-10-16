@@ -62,7 +62,7 @@ print("Agents At Start")
 for n,a in agents_at_start.items():
     print(n,a.money,json.dumps(a.entities_info))
 
-print("\n Agent At End")
+print("\n Agents At End")
 for n,a in agents_at_end.items():
     print(n,a.money,json.dumps(a.entities_info))
 

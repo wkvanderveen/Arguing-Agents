@@ -1,3 +1,4 @@
+mapping={'buy':'bought','sell':'sold'}
 class AgentState(object):
     def __init__(self, this_agent, *args, **kwargs):
         self.this_agent = this_agent
@@ -29,19 +30,27 @@ class NegotiationState(AgentState):
 
     def accept(self):
         from main import SYSTEM
+        transaction_money = self.price_each * self.quantity
         if self.buy_or_sell == 'buy':
-            self.this_agent.money -= self.price_each * self.quantity
+
+            self.this_agent.money -= transaction_money
             self.this_agent.entities_info[self.fruit]['quantity'] += self.quantity
+            self.other_agent.money+=transaction_money
+            self.other_agent.entities_info[self.fruit]['quantity'] -= self.quantity
             self.other_agent.state = RandomWalkState(this_agent=self.other_agent)
             self.this_agent.state = RandomWalkState(this_agent=self.this_agent)
         else:
-            self.this_agent.money += self.price_each * self.quantity
+            self.this_agent.money += transaction_money
             self.this_agent.entities_info[self.fruit]['quantity'] -= self.quantity
+            self.other_agent.money -= transaction_money
+            self.other_agent.entities_info[self.fruit]['quantity'] += self.quantity
+
             self.other_agent.state = RandomWalkState(this_agent=self.other_agent)
             self.this_agent.state = RandomWalkState(this_agent=self.this_agent)
 
-        print("Trade accepted! Agent {0} sold {1} {2} for {3:.2f} to agent {4} after {5} steps".format(
+        print("Trade accepted! Agent {0} {1} {2} {3} for {4:.2f} to agent {5} after {6} steps".format(
             self.this_agent.name,
+            mapping[self.buy_or_sell],
             self.quantity,
             self.fruit,
             self.price_each * self.quantity,
