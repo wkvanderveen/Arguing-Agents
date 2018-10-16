@@ -14,6 +14,7 @@ class NegotiationState(AgentState):
         self.price_each = price_each
 
     def decline(self):
+        from main import SYSTEM
         self.other_agent.state = RandomWalkState(this_agent=self.other_agent)
         self.this_agent.state = RandomWalkState(this_agent=self.this_agent)
         print("Trade cancelled between agent {0} and agent {1} after {2} turn{3}.".format(
@@ -22,7 +23,12 @@ class NegotiationState(AgentState):
             self.duration,
             ('' if self.duration == 1 else 's')))
 
+        SYSTEM.update_negotiation_happened(self.this_agent.agent_id,self.other_agent.agent_id,False) #This means negative negotiation happend
+
+
+
     def accept(self):
+        from main import SYSTEM
         if self.buy_or_sell == 'buy':
             self.this_agent.money -= self.price_each * self.quantity
             self.this_agent.entities_info[self.fruit]['quantity'] += self.quantity
@@ -41,6 +47,14 @@ class NegotiationState(AgentState):
             self.price_each * self.quantity,
             self.other_agent.name,
             self.duration))
+
+
+
+
+        SYSTEM.update_negotiation_happened(self.this_agent.agent_id, self.other_agent.agent_id,
+                                           False)  # This means positive negotiation happend
+
+        SYSTEM.update_entity_global_average_price(self.fruit,self.price_each,self.quantity)
 
     def print_info(self):
         print("Agent {0} is {1} agent {2} for {3} steps so far.".format(

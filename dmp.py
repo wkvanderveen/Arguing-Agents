@@ -1,6 +1,7 @@
 
-from main import SYSTEM
 from constants import MAX_TIME as timesteps
+from main import SYSTEM
+
 '''
 types_of_actions = [
     'Buy',
@@ -50,7 +51,7 @@ Valid Argument set for selling E1 to A2 , by A1- > [
 
 
 class Action():
-    def __int__(self,type_of_action,performed_by_agent,performed_on_agent,entity):
+    def __init__(self,type_of_action,performed_by_agent,performed_on_agent,entity):
         self.type_of_action=type_of_action #can be "BUY" , "SELL"
         self.performed_by_agent=performed_by_agent
         self.performed_on_agent=performed_on_agent
@@ -65,8 +66,30 @@ class ArgumentSet():
         self.entity=entity
         self.score=float('-inf')
 
-    def __price_is_going_down(self):
-        return SYSTEM.is_price_going_down(self.entity.name)
+    # # Case of can not say will also make argument valid
+    # def __price_is_going_up(self):
+    #     t=SYSTEM.is_price_going_up(self.entity.name)
+    #     return True if t[0] == 'CAN NOT TELL' else t[1]
+    #
+    #
+    # #Case of can not say will also make argument valid
+    # def __price_is_going_down(self):
+    #     t=SYSTEM.is_price_going_down(self.entity.name)
+    #     return True if t[0] == 'CAN NOT TELL' else t[1]
+
+    # Case of can not say will also make argument valid
+    def __validity_wrt_price(self):
+        if self.type_of_action == 'BUY':
+            t = SYSTEM.is_price_going_down(self.entity.name)
+        else:
+            t = SYSTEM.is_price_going_up(self.entity.name)
+
+        #In order to save recalculation saving it in the argument set itself.
+        self.part_0= 1.0 if t[0] == 'CAN TELL' else 0.5 #This is giving more weight to argument in which we can definitly tell to argument in which we can't tell definitly
+        return True if t[0] == 'CAN NOT TELL' else t[1]
+
+
+
 
     def __agent_is_free(self):
         return self.agent2.is_agent_free()
@@ -99,15 +122,15 @@ class ArgumentSet():
             agent2_buying_price = self.agent2.get_entity_buying_amount(self.entity.name)
             return  agent2_buying_price and  self.agent2.money >= agent2_buying_price
 
-    def __is_valid_argument_set(self):
+    def is_valid_argument_set(self):
         if self.type_of_action == 'BUY':
-            return (self.__price_is_going_down() and  # price should go down inorder to be it as a buying argument
+            return (self.__validity_wrt_price() and  # price should go down inorder to be it as a buying argument
             self.__agent_is_free() and
             self.__agent_is_reachable() and
             self.__agent_has_entity() and
             self.__agent_has_cash_for_entity())
         else:
-            return (not self.__price_is_going_down() and #price should go up in order to sell
+            return (    self.__validity_wrt_price() and #price should go up in order to sell
                         self.__agent_is_free() and
                         self.__agent_is_reachable() and
                         self.__agent_has_entity() and
@@ -120,6 +143,7 @@ class ArgumentSet():
             negotiations=SYSTEM.get_total_negotiation(self.agent1.agent_id,self.agent2.agent_id)
             part_a=(negotiations[1]-negotiations[2])/float(negotiations[0])
             part_b=SYSTEM.get_fraction_change_in_price(self.entity.name)
+            part_b*=-1 if self.type_of_action == 'BUY' else part_b
             part_c = 0
             entity_global_avg_price=SYSTEM.get_entity_global_average_price(self.entity.name)
 
@@ -132,8 +156,18 @@ class ArgumentSet():
                 if selling_amount != None and entity_global_avg_price != None and selling_amount != 0:
                     part_c=(entity_global_avg_price - selling_amount)/float(selling_amount)
 
-            self.score= (part_a+part_b+part_c)/float(distance)
+            self.score= (self.part_0+part_a+part_b+part_c)/float(distance)
 
+    def __repr__(self):
+        return "Action: {}, " \
+               "Asking Agent: {}, " \
+               "Sent To Agent: {}," \
+               "Entity: {}, Score: {}".format(self.type_of_action,
+                                  self.agent1.name,
+                                  self.agent2.name,
+                                  self.entity.name,
+                                  self.score
+                                  )
 
 
 
@@ -142,6 +176,9 @@ class DecisionMakingProcess():
 
     def __init__(self,asking_agent):
         self.asking_agent=asking_agent
+        self.time_point=SYSTEM.time
+
+        print("Initialized DMP For Agent {}, at time {}".format(self.asking_agent.name,self.time_point))
 
 
     def create_all_arguments(self):
@@ -178,9 +215,8 @@ class DecisionMakingProcess():
         #AgentIsReachable gives true
         #AgentHasEnity
         #AgentHasCashForEntity
-
-        self.valid_buying_arguments=filter(lambda x: x.__is_valid_argument_set(),self.all_buying_arguments)
-        self.valid_selling_arguments=filter(lambda x: x.__is_valid_argument_set(),self.all_selling_arguments)
+        self.valid_buying_arguments=filter(lambda x: x.is_valid_argument_set(),self.all_buying_arguments)
+        self.valid_selling_arguments=filter(lambda x: x.is_valid_argument_set(),self.all_selling_arguments)
 
 
     '''
@@ -199,14 +235,20 @@ class DecisionMakingProcess():
             
     Final score will be divide it by how far is the agent.
     '''
-    def calculate_score_arguments(self):
-        pass
+    def calculate_score_arguments(self,all_arguments):
+        for x in all_arguments:
+            x.cal_score()
 
     def resolve_conflict(self):
-        if self.valid_buying_arguments or self.valid_selling_arguments:
-            all_arguments=self.valid_buying_arguments+self.valid_selling_arguments
+        all_arguments = list(self.valid_buying_arguments) + list(self.valid_selling_arguments)
+
+        if len(all_arguments)>0:
+            self.calculate_score_arguments(all_arguments)
             sorted_arguments=sorted(all_arguments,key=lambda x: x.score,reverse=True)
-            return sorted_arguments[0]
+            wining_argument=sorted_arguments[0]
+            for ar in sorted_arguments:
+                print(ar.__repr__())
+            return wining_argument
         else:
             return None
 
@@ -218,6 +260,7 @@ class DecisionMakingProcess():
         if wining_argument:
             return Action(wining_argument.type_of_action,wining_argument.agent1,wining_argument.agent2,wining_argument.entity)
 
+        print("****** NO ARGUENT FOUND *******")
         return None
 
 

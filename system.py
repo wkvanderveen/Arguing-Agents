@@ -1,5 +1,5 @@
 """docstring placeholder"""
-from agent import *
+
 import pygame
 from gridmodel import GridModel
 from gridview import GridView
@@ -9,6 +9,9 @@ from random import random, choice, shuffle
 import time
 import collections
 import json
+from agent import Agent
+from random import randint
+from agentstate import NegotiationState,RandomWalkState,WaitForResponseState,WalkToAgentState
 
 
 class Entity():
@@ -24,12 +27,14 @@ class EntityTimeSeries():
         self.last_prices=collections.deque([], self.max_length) # will only keep last three prices
 
     def is_price_going_down(self):
-        s=zip(list(self.last_prices), list(self.last_prices[1:]))
-        return all([all(x>y for x, y in s),True if len(s)>0 else False])
+        s=zip(list(self.last_prices), list(self.last_prices)[1:])
+        l = [x < y for x, y in s]
+        return ('CAN TELL',all(l)) if len(l) > 0 else ('CAN NOT TELL',False)
 
-    def is_prince_going_up(self):
-        s=zip(list(self.last_prices), list(self.last_prices[1:]))
-        return all([all(x<y for x, y in s),True if len(s)>0 else False])
+    def is_price_going_up(self):
+        s=zip(list(self.last_prices), list(self.last_prices)[1:])
+        l=[x<y for x,y in s]
+        return ('CAN TELL',all(l)) if len(l)>0 else ('CAN NOT TELL',False)
 
     def add_price_to_time_series(self,price):
         self.last_prices.append(price)
@@ -41,6 +46,9 @@ class EntityTimeSeries():
         if len(self.last_prices)>0:
             return ((self.last_prices[-1]-self.last_prices[0])/float(sum(self.last_prices)))*len(self.last_prices)
         return 0.0
+
+    def __repr__(self):
+        return self.last_prices
 
 
 
@@ -197,20 +205,27 @@ class System():
         return [agent for name,agent in self.agents.items() if name not in except_agents]
 
     #To set global average price of entity
-    def update_entity_global_average_price(self,entity_name,price):
+    def update_entity_global_average_price(self,entity_name,price,quantity):
         if entity_name in self.entity_global_price_updates.keys():
-            self.entity_global_price_updates[entity_name].append(price)
+            self.entity_global_price_updates[entity_name].append((price,quantity))
         else:
-            self.entity_global_price_updates[entity_name]=[price]
+            self.entity_global_price_updates[entity_name]=[(price,quantity)]
 
 
     #Should only be called when time step changes
     def set_global_average_price_for_all_entities(self):
+
+        def _weighted_sum(tpls):
+            ttl = sum([x[1] for x in tpls])
+            return sum([x[0]*x[1] for x in tpls])/ttl
+
         print("Updating Global Average Prices of Entities ")
         for entity_name, prices in self.entity_global_price_updates.items():
             if len(prices)>0:
-                self.entity_global_average_price[entity_name]=(self.entity_global_average_price.get(entity_name,sum(prices)/len(prices))+sum(prices)/len(prices))/2
-                print("\t Updated average price of entity: "+entity_name)
+                weighted_sum=_weighted_sum(prices)
+                gape=(self.entity_global_average_price.get(entity_name,weighted_sum)+weighted_sum)/2
+                self.entity_global_average_price[entity_name]=gape
+                print("\t Updated average price of entity: "+entity_name,gape)
 
             #Add average price to entity trend
             temp_price=self.entity_global_average_price.get(entity_name,None)
@@ -228,18 +243,25 @@ class System():
             entity_trend = self.price_trends[entity_name]
         entity_trend.add_price_to_time_series(price)
 
+        print("PRICE TRENDS: ")
+        self.__print_price_trends()
+
+    def __print_price_trends(self):
+        for key,val in self.price_trends.items():
+            print(key,val.__repr__())
 
     def reset_enity_global_price_updates_dict(self):
-        self.enity_global_price_updates=dict()
+        self.entity_global_price_updates=dict()
 
 
     def is_price_going_up(self,entity_name):
         entity_trend = self.price_trends.get(entity_name,None)
-        return all(entity_trend,entity_trend.is_prince_going_up())
+        return entity_trend.is_price_going_up() if entity_trend else ('CAN NOT TELL',False)
 
     def is_price_going_down(self,entity_name):
         entity_trend = self.price_trends.get(entity_name, None)
-        return all(entity_trend, entity_trend.is_prince_going_down())
+        return entity_trend.is_price_going_down() if entity_trend else ('CAN NOT TELL',False)
+
 
     def get_fraction_change_in_price(self,entity_name):
         entity_trend = self.price_trends.get(entity_name, None)
