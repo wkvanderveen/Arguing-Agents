@@ -5,6 +5,8 @@ from message import BaseMessage
 from grid import *
 from agentstate import *
 from random import random
+import constants
+import pygame
 
 
 display = True

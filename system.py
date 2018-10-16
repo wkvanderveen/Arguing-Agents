@@ -8,7 +8,6 @@ import constants
 from random import random, choice, shuffle
 import time
 import collections
-
 import json
 
 
@@ -20,9 +19,9 @@ class Entity():
 #This class will store last three prices of the entity.
 class EntityTimeSeries():
     def __init__(self,entity_name):
-        self.max_lenght = 3
+        self.max_length = 3
         self.entity_name=entity_name
-        self.last_prices=collections.deque([], self.max_lenght) # will only keep last three prices
+        self.last_prices=collections.deque([], self.max_length) # will only keep last three prices
 
     def is_price_going_down(self):
         s=zip(list(self.last_prices), list(self.last_prices[1:]))
@@ -34,6 +33,14 @@ class EntityTimeSeries():
 
     def add_price_to_time_series(self,price):
         self.last_prices.append(price)
+
+    '''
+    This is fractional local change in price, which means how much price has changed wrt last three points.
+    '''
+    def get_fraction_change_in_price(self):
+        if len(self.last_prices)>0:
+            return ((self.last_prices[-1]-self.last_prices[0])/float(sum(self.last_prices)))*len(self.last_prices)
+        return 0.0
 
 
 

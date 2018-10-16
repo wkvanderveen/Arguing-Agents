@@ -1,5 +1,6 @@
 
-from main import SYSTEM, timesteps
+from main import SYSTEM
+from constants import MAX_TIME as timesteps
 '''
 types_of_actions = [
     'Buy',
@@ -92,6 +93,21 @@ class ArgumentSet():
             agent2_buying_price = self.agent2.get_entity_buying_amount(self.entity.name)
             return  agent2_buying_price and  self.agent2.money >= agent2_buying_price
 
+    def __is_valid_argument_set(self):
+        if self.type_of_action == 'BUY':
+            return (self.__price_is_going_down() and  # price should go down inorder to be it as a buying argument
+            self.__agent_is_free() and
+            self.__agent_is_reachable() and
+            self.__agent_has_entity() and
+            self.__agent_has_cash_for_entity())
+        else:
+            return (not self.__price_is_going_down() and #price should go up in order to sell
+                        self.__agent_is_free() and
+                        self.__agent_is_reachable() and
+                        self.__agent_has_entity() and
+                        self.__agent_has_cash_for_entity())
+
+
 
 #should know all the global variables
 class DecisionMakingProcess():
@@ -135,13 +151,26 @@ class DecisionMakingProcess():
         #AgentHasEnity
         #AgentHasCashForEntity
 
-        self.valid_buying_arguments=filter(lambda x: x.__agent_is_free() and
-                                                     x.__agent_is_reachable() and x.__agent_has_entity() and x.__agent_has_cash_for_entity()
-                                           , self.all_buying_arguments)
-        self.valid_selling_arguments=filter(lambda x: x.__agent_is_free() and
-                                                     x.__agent_is_reachable() and x.__agent_has_entity() and x.__agent_has_cash_for_entity()
-                                           , self.all_selling_arguments)
+        self.valid_buying_arguments=filter(lambda x: x.__is_valid_argument_set(),self.all_buying_arguments)
+        self.valid_selling_arguments=filter(lambda x: x.__is_valid_argument_set(),self.all_selling_arguments)
 
+
+    '''
+    Note: I am defining dmp as an expert, so it should not have knowledge specific to the agent, which is how many times agent has negotiated with
+    other agents and whether it was positive negotiation or negative negotiation. 
+    By positive I mean agent got what it wanted and negative agent did not get what it wanted.
+    
+    Scoring will be done by summing the following: 
+    1.) (total positive negotiation - total negative negotiation)/Total negotiation
+    2.) (Total percentage of local change in price) For definition see time series, in case of buying multiply it by -1 before adding to score
+    3.) Total fractional price change wrt agent wrt to entity:
+        For buying:
+            (maximum buying price - global average price)/maximum buying
+        For Selling:
+            (global average price - minimum selling price)/minimum selling price
+    '''
+    def score_arguments(self):
+        pass
 
     def resolve_conflict(self):
         pass
