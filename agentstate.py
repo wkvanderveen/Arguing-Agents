@@ -4,17 +4,49 @@ class AgentState(object):
 
 class NegotiationState(AgentState):
     """docstring for NegotiationState"""
-    def __init__(self, buy_or_sell, other_agent, duration=0, *args, **kwargs):
+    def __init__(self, buy_or_sell, other_agent, fruit, quantity, price_each, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.buy_or_sell = buy_or_sell,
-        self.other_agent = other_agent,
-        self.duration = duration
+        self.buy_or_sell = buy_or_sell
+        self.other_agent = other_agent
+        self.fruit = fruit
+        self.quantity = quantity
+        self.duration = 0
+        self.price_each = price_each
+
+    def decline(self):
+        self.other_agent.state = RandomWalkState(this_agent=self.other_agent)
+        self.this_agent.state = RandomWalkState(this_agent=self.this_agent)
+        print("Trade cancelled between agent {0} and agent {1} after {2} turn{3}.".format(
+            self.this_agent.name,
+            self.other_agent.name,
+            self.duration,
+            ('' if self.duration == 1 else 's')))
+
+    def accept(self):
+        if self.buy_or_sell == 'buy':
+            self.this_agent.money -= self.price_each * self.quantity
+            self.this_agent.entities_info[self.fruit]['quantity'] += self.quantity
+            self.other_agent.state = RandomWalkState(this_agent=self.other_agent)
+            self.this_agent.state = RandomWalkState(this_agent=self.this_agent)
+        else:
+            self.this_agent.money += self.price_each * self.quantity
+            self.this_agent.entities_info[self.fruit]['quantity'] -= self.quantity
+            self.other_agent.state = RandomWalkState(this_agent=self.other_agent)
+            self.this_agent.state = RandomWalkState(this_agent=self.this_agent)
+
+        print("Trade accepted! Agent {0} sold {1} {2} for {3:.2f} to agent {4} after {5} steps".format(
+            self.this_agent.name,
+            self.quantity,
+            self.fruit,
+            self.price_each * self.quantity,
+            self.other_agent.name,
+            self.duration))
 
     def print_info(self):
         print("Agent {0} is {1} agent {2} for {3} steps so far.".format(
             self.this_agent.name,
-            ('selling to' if self.buy_or_sell[0] == 'sell' else 'buying from'),
-            self.other_agent[0].name,
+            ('selling to' if self.buy_or_sell == 'sell' else 'buying from'),
+            self.other_agent.name,
             self.duration))
 
 class WalkToAgentState(AgentState):
@@ -30,7 +62,7 @@ class WaitForResponseState(AgentState):
     def __init__(self, other_agent, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.other_agent = other_agent
-        self.counter = 2
+        self.counter = 1
 
     def print_info(self):
         print("Agent {0} is waiting for a response from agent {1}.".format(

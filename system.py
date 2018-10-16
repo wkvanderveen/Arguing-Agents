@@ -5,7 +5,7 @@ from gridmodel import GridModel
 from gridview import GridView
 from gridcontrol import GridControl
 import constants
-from random import choice, shuffle
+from random import random, choice, shuffle
 import time
 import collections
 
@@ -105,13 +105,26 @@ class System():
 
         print("\nAGENT INFO:")
         for name, agent in items:
-            print("incoming: " + str(agent.has_incoming_messages()))
-
             agent.set_neighbors(self.get_neighbors(agent))
             if isinstance(agent.state, NegotiationState):
-                # TODO: negotiate process
-                agent.state.duration += 1
+                if agent.state.duration > agent.patience:
+                    agent.state.decline()
+                    continue
 
+                # Accept offer if within price range
+                if agent.state.buy_or_sell == 'buy':
+                    if agent.state.price_each <= agent.entities_info['MANGOES']['max_buying_price']:
+                        agent.state.accept()
+                        continue
+                if agent.state.buy_or_sell == 'sell':
+                    if agent.state.price_each >= agent.entities_info['MANGOES']['min_selling_price']:
+                        agent.state.accept()
+                        continue
+
+                # At this point, price should be further negotiated
+                if agent.state.buy_or_sell == 'sell':
+                    agent.state.price_each -= agent.elasticity*random()/(1+agent.state.duration)
+                    agent.state.duration += 1
 
             elif isinstance(agent.state, RandomWalkState) and not agent.has_incoming_messages():
                 agent.random_walk()
@@ -128,6 +141,7 @@ class System():
         for name, agent in self.agents.items():
             agent.set_color()
             agent.state.print_info()
+            agent.freeze_movement = False
 
         self.time += 1
 
