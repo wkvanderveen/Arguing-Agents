@@ -49,8 +49,8 @@ class Agent():
         all_entities=SYSTEM.get_all_entities()
         choices=[True,False]
         for entity in all_entities:
-            if choices[randint(0,1)]:
-            # if True:
+            # if choices[randint(0,1)]:
+            if True:
                 self.set_entity_info(entity)
             else:
                 self.entities_info[entity.name]={'max_buying_price': None ,
@@ -59,10 +59,10 @@ class Agent():
                                                  'isInterested':False}
 
 
-        self.entities_info['MANGOES'] = {'max_buying_price': randint(40, 55),
-                                           'min_selling_price': randint(45, 60),
-                                           'quantity': randint(1, 10),
-                                           'isInterested': True}
+        # self.entities_info['MANGOES'] = {'max_buying_price': randint(40, 55),
+        #                                    'min_selling_price': randint(45, 60),
+        #                                    'quantity': randint(1, 10),
+        #                                    'isInterested': True}
 
     #Randomly set prices for entities related to agent
     #isInterested Flag tells us that agent is interested in this entity
@@ -77,16 +77,24 @@ class Agent():
         if self.adjacent_to_agent(self.state.other_agent):
             print("Found target")
             # HARDCODED: generate request
-            from dmp import DecisionMakingProcess
-            dmp = DecisionMakingProcess(self)
-            dmp.make_decision()
-
-            self.generate_request(request_type='buy',
+            entity_name=self.state.action_to_perform.entity.name
+            self.generate_request(request_type=self.state.action_to_perform.type_of_action.lower(),
                                   receiver=self.state.other_agent,
-                                  fruit='MANGOES',
+                                  fruit=entity_name,
                                   quantity=randint(1, 10),
-                                  price_each=randint(int(self.entities_info['MANGOES']['min_selling_price']*uniform(0.5, 0.9)),
-                                                     int(self.entities_info['MANGOES']['min_selling_price']*(1+random()))))
+                                  price_each=randint(
+                                      int(self.entities_info[entity_name]['min_selling_price'] * uniform(0.5, 0.9)),
+                                      int(self.entities_info[entity_name]['min_selling_price'] * (1 + random())))
+
+                                  )
+
+
+            # self.generate_request(request_type='buy',
+            #                       receiver=self.state.other_agent,
+            #                       fruit='MANGOES',
+            #                       quantity=randint(1, 10),
+            #                       price_each=randint(int(self.entities_info['MANGOES']['min_selling_price']*uniform(0.5, 0.9)),
+            #                                          int(self.entities_info['MANGOES']['min_selling_price']*(1+random()))))
 
         elif not self.move_towards_target(directions):
             self.random_walk()

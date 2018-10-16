@@ -31,10 +31,20 @@ for i in range(constants.MAX_TIME):
 
     ### HARDCODED SEND REQUEST between adjacent agents
 
-    for name, agent in SYSTEM.agents.items():
-        if random() < 0.005 :
-            if isinstance(agent.state, RandomWalkState):
-                agent.state = WalkToAgentState(this_agent=agent, other_agent=SYSTEM.get_random_target(agent.agent_id))
+    # for name, agent in SYSTEM.agents.items():
+    #     if random() < 0.005 :
+    #         if isinstance(agent.state, RandomWalkState):
+    #             agent.state = WalkToAgentState(this_agent=agent, other_agent=SYSTEM.get_random_target(agent.agent_id))
+
+    for name,agent in SYSTEM.agents.items():
+        if isinstance(agent.state, RandomWalkState):
+            from dmp import DecisionMakingProcess
+            dmp = DecisionMakingProcess(agent)
+            decision = dmp.make_decision()
+
+            if decision:
+                agent.state = WalkToAgentState(this_agent=agent, other_agent=decision.performed_on_agent,action_to_perform=decision)
+
 
     ###
 

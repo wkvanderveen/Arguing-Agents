@@ -130,11 +130,13 @@ class System():
 
                 # Accept offer if within price range
                 if agent.state.buy_or_sell == 'buy':
-                    if agent.state.price_each <= agent.entities_info['MANGOES']['max_buying_price']:
+                    # if agent.state.price_each <= agent.entities_info['MANGOES']['max_buying_price']:
+                    if agent.state.price_each <= agent.entities_info[agent.state.fruit]['max_buying_price']:
                         agent.state.accept()
                         continue
                 if agent.state.buy_or_sell == 'sell':
-                    if agent.state.price_each >= agent.entities_info['MANGOES']['min_selling_price']:
+                    # if agent.state.price_each >= agent.entities_info['MANGOES']['min_selling_price']:
+                    if agent.state.price_each >= agent.entities_info[agent.state.fruit]['min_selling_price']:
                         agent.state.accept()
                         continue
 
