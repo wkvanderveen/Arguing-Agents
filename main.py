@@ -19,6 +19,12 @@ for agent_idx in range(constants.N_AGENTS):
                         no_agents=constants.N_AGENTS)
 
 
+
+SYSTEM.initialize_total_negotiations_count()
+
+
+
+
 for i in range(constants.MAX_TIME):
     print("\nUpdating system...\n{}\n".format('-' * 56))
     SYSTEM.print_info()

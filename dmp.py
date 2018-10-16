@@ -12,6 +12,7 @@ types_of_base = [
     'AgentIsFree',
     'AgentIsReachable',# if manhatten distance + 2 (for one step of negotiation)is more than global time steps left.
     'HowFarAreAgents', #will have variable as agents
+    'AgentIsInterestedInEntity', #is agent interested in entity
     'AgentHasEntity', # will have variable as entity
     'AgentHasCashForEntity',#will take agent and entity
     'MarketIsClosing',  # will be if global time is left only last 10%
@@ -29,6 +30,7 @@ Valid Argument set for buying E1 from A2 , by A1 - > [
     AgentIsFree(A2)-> True,
     AgentIsReachable(A1,A2) -> True, is A1 and A2 can access each other in the left time.
     HowFarAreAgents(A1,A2)->True,<how far in manhattan distance>,
+    AgentIsInterestedInEntity(A1,E1)-> True if A1 is interested in buying entity E1
     AgentHasEntity(E1,A2)-> True, (whether A2 has entity E1)
     AgentHasCashForEntity(E1,A1)-> True, (should be >= maximum one unit price of E1 at which agent 1 is willing to buy)
     MarketIsClosing->False (Not necessary because we have implemented agent is reachable.)
@@ -39,6 +41,7 @@ Valid Argument set for selling E1 to A2 , by A1- > [
     AgentIsFree(A2)-> True,
     AgentIsReachable(A1,A2) -> True, is A1 and A2 can access each other in the left time.
     HowFarAreAgents(A1,A2)->True,<how far in manhattan distance>,
+    AgentIsInterestedInEntity(A2,E1)-> True if A2 is interested in buying entity E1
     AgentHasEntity(E1,A1)-> True, (whether A1 has entity E1)
     AgentHasCashForEntity(E1,A2)-> True, (should be >= maximum one unit price of E1 at which agent 2 is willing to buy)
     MarketIsClosing->False (Not necessary because we have implemented agent is reachable.)
@@ -47,10 +50,10 @@ Valid Argument set for selling E1 to A2 , by A1- > [
 
 
 class Action():
-    def __int__(self,type_of_action,from_agent,to_agent,entity):
+    def __int__(self,type_of_action,performed_by_agent,performed_on_agent,entity):
         self.type_of_action=type_of_action #can be "BUY" , "SELL"
-        self.from_agent=from_agent
-        self.to_agent=to_agent
+        self.performed_by_agent=performed_by_agent
+        self.performed_on_agent=performed_on_agent
         self.entity=entity
 
 
@@ -60,6 +63,7 @@ class ArgumentSet():
         self.agent1=agent1  # This will be asking agent
         self.agent2=agent2
         self.entity=entity
+        self.score=float('-inf')
 
     def __price_is_going_down(self):
         return SYSTEM.is_price_going_down(self.entity.name)
@@ -87,9 +91,11 @@ class ArgumentSet():
 
     def __agent_has_cash_for_entity(self):
         if self.type_of_action == 'BUY':
+            #In case of buying, whether A1 is interested in Entity, is also taken care of
             agent1_buying_price=self.agent1.get_entity_buying_amount(self.entity.name)
             return  agent1_buying_price and  self.agent1.money >= agent1_buying_price
         else:
+            #In case of selling will also take care of whether A2 is interested in Entity
             agent2_buying_price = self.agent2.get_entity_buying_amount(self.entity.name)
             return  agent2_buying_price and  self.agent2.money >= agent2_buying_price
 
@@ -106,6 +112,28 @@ class ArgumentSet():
                         self.__agent_is_reachable() and
                         self.__agent_has_entity() and
                         self.__agent_has_cash_for_entity())
+
+    #Note: According to the flow this function will be called onlt after filtering of valid arguments.
+    def cal_score(self):
+        distance =self.__how_far_are_agents() #which will be greater than or equal to zero.
+        if distance:
+            negotiations=SYSTEM.get_total_negotiation(self.agent1.agent_id,self.agent2.agent_id)
+            part_a=(negotiations[1]-negotiations[2])/float(negotiations[0])
+            part_b=SYSTEM.get_fraction_change_in_price(self.entity.name)
+            part_c = 0
+            entity_global_avg_price=SYSTEM.get_entity_global_average_price(self.entity.name)
+
+            if self.type_of_action == 'BUY':
+                buying_amount=self.agent1.get_entity_buying_amount(self.entity.name)
+                if buying_amount !=None and entity_global_avg_price != None and buying_amount!=0:
+                    part_c=(buying_amount-entity_global_avg_price)/float(buying_amount)
+            else:
+                selling_amount=self.agent1.get_entity_selling_amount(self.entity.name)
+                if selling_amount != None and entity_global_avg_price != None and selling_amount != 0:
+                    part_c=(entity_global_avg_price - selling_amount)/float(selling_amount)
+
+            self.score= (part_a+part_b+part_c)/float(distance)
+
 
 
 
@@ -168,19 +196,28 @@ class DecisionMakingProcess():
             (maximum buying price - global average price)/maximum buying
         For Selling:
             (global average price - minimum selling price)/minimum selling price
+            
+    Final score will be divide it by how far is the agent.
     '''
-    def score_arguments(self):
+    def calculate_score_arguments(self):
         pass
 
     def resolve_conflict(self):
-        pass
+        if self.valid_buying_arguments or self.valid_selling_arguments:
+            all_arguments=self.valid_buying_arguments+self.valid_selling_arguments
+            sorted_arguments=sorted(all_arguments,key=lambda x: x.score,reverse=True)
+            return sorted_arguments[0]
+        else:
+            return None
 
 
     def make_decision(self):
         self.create_all_arguments()
         self.filter_out_valid_arguments()
-        decision=self.resolve_conflict() # it will be the action to take.
+        wining_argument=self.resolve_conflict() # it will be the action to take.
+        if wining_argument:
+            return Action(wining_argument.type_of_action,wining_argument.agent1,wining_argument.agent2,wining_argument.entity)
 
-        return decision
+        return None
 
 

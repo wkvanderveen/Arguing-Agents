@@ -67,6 +67,8 @@ class System():
 
         self.price_trends={}
 
+        self.total_negotiations =[]
+
         #This is a dict to maintain price update requests coming from system in the given time step
         self.entity_global_price_updates={}
 
@@ -239,6 +241,14 @@ class System():
         entity_trend = self.price_trends.get(entity_name, None)
         return all(entity_trend, entity_trend.is_prince_going_down())
 
+    def get_fraction_change_in_price(self,entity_name):
+        entity_trend = self.price_trends.get(entity_name, None)
+        if entity_trend:
+            return entity_trend.get_fraction_change_in_price()
+        return 0.0
+
+
+
 
 
 
@@ -309,3 +319,30 @@ class System():
         """Print the information about the system."""
         print("Time = {0}.\nNumber of agents = {1}.\n".format(
             self.time, len(self.agents)))
+
+
+    '''
+    We can keep negotiation count as the property of agent, whcih makes sense, but we are using it as an argument in dmp, so keeping it over here.
+    We can change this later.
+    '''
+    #Initialize total negotiations.
+    def initialize_total_negotiations_count(self):
+        agents = self.get_all_agents_in_list()
+        self.total_negotiations=[[[0,0] for a in agents] for out_a in agents]
+
+
+    #This will update negotiation count
+    def update_negotiation_happened(self,agent1_id,agent2_id,isPositive):
+        if isPositive:
+            self.total_negotiations[agent1_id][agent2_id][0]+=1
+            self.total_negotiations[agent2_id][agent1_id][0] += 1
+        else:
+            self.total_negotiations[agent1_id][agent2_id][1] += 1
+            self.total_negotiations[agent2_id][agent1_id][1] += 1
+
+    def get_total_negotiation(self,agent1_id,agent2_id):
+        negotiations=self.total_negotiations[agent1_id][agent2_id]
+        return (negotiations[0]+negotiations[1]+1,negotiations[0],negotiations[1]) #This will return total , total positive , total negative
+
+
+
