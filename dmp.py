@@ -88,9 +88,6 @@ class ArgumentSet():
         self.part_0= 1.0 if t[0] == 'CAN TELL' else 0.5 #This is giving more weight to argument in which we can definitly tell to argument in which we can't tell definitly
         return True if t[0] == 'CAN NOT TELL' else t[1]
 
-
-
-
     def __agent_is_free(self):
         return self.agent2.is_agent_free()
 
@@ -240,10 +237,10 @@ class DecisionMakingProcess():
 
     '''
     Note: I am defining dmp as an expert, so it should not have knowledge specific to the agent, which is how many times agent has negotiated with
-    other agents and whether it was positive negotiation or negative negotiation. 
+    other agents and whether it was positive negotiation or negative negotiation.
     By positive I mean agent got what it wanted and negative agent did not get what it wanted.
-    
-    Scoring will be done by summing the following: 
+
+    Scoring will be done by summing the following:
     1.) (total positive negotiation - total negative negotiation)/Total negotiation
     2.) (Total percentage of local change in price) For definition see time series, in case of buying multiply it by -1 before adding to score
     3.) Total fractional price change wrt agent wrt to entity:
@@ -251,7 +248,7 @@ class DecisionMakingProcess():
             (maximum buying price - global average price)/maximum buying
         For Selling:
             (global average price - minimum selling price)/minimum selling price
-            
+
     Final score will be divide it by how far is the agent.
     '''
     def calculate_score_arguments(self,all_arguments):

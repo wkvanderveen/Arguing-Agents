@@ -19,11 +19,13 @@ MAX_TIME = 100
 
 # agent parameters
 MONEY = 500.0  # initial money of an agent
-MAXPATIENCE = 20  # maximum patience an agent has
+MAXPATIENCE = 1  # maximum patience an agent has
 
 RANDOM_WALK = 0
 SEARCH_AGENT = 1
 NEGOTIATE = 2
+
+starting_counter_price = 0.1
 
 
 

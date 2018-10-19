@@ -5,7 +5,7 @@ from gridmodel import GridModel
 from gridview import GridView
 from gridcontrol import GridControl
 import constants
-from random import random, choice, shuffle
+from random import random, choice, shuffle, uniform, triangular
 import time
 import collections
 import json
@@ -124,25 +124,34 @@ class System():
         for name, agent in items:
             agent.set_neighbors(self.get_neighbors(agent))
             if isinstance(agent.state, NegotiationState):
-                if agent.state.duration > agent.patience:
+                time_remaining = constants.MAX_TIME - self.time
+                if agent.patience*time_remaining*0.5 < agent.state.duration or \
+                    (agent.state.buy_or_sell == 'sell' and agent.state.other_agent.money < agent.state.price_each*agent.state.quantity) or \
+                    (agent.state.buy_or_sell == 'buy' and agent.money < agent.state.price_each*agent.state.quantity) or \
+                    (agent.state.buy_or_sell == 'sell' and agent.entities_info[agent.state.fruit]['quantity'] < agent.state.quantity) or \
+                    (agent.state.buy_or_sell == 'buy' and agent.state.other_agent.entities_info[agent.state.fruit]['quantity'] < agent.state.quantity):
                     agent.state.decline()
                     continue
 
                 # Accept offer if within price range
                 if agent.state.buy_or_sell == 'buy':
-                    # if agent.state.price_each <= agent.entities_info['MANGOES']['max_buying_price']:
-                    if agent.state.price_each <= agent.entities_info[agent.state.fruit]['max_buying_price']:
+                    if agent.state.other_agent.state.price_each <= agent.entities_info[agent.state.fruit]['max_buying_price']:
                         agent.state.accept()
                         continue
-                if agent.state.buy_or_sell == 'sell':
-                    # if agent.state.price_each >= agent.entities_info['MANGOES']['min_selling_price']:
-                    if agent.state.price_each >= agent.entities_info[agent.state.fruit]['min_selling_price']:
+                    """
+                    if agent.state.buy_or_sell == 'sell':
+                    if agent.state.other_agent.state.price_each >= agent.entities_info[agent.state.fruit]['min_selling_price']:
                         agent.state.accept()
                         continue
+                    """
 
                 # At this point, price should be further negotiated
+                if agent.state.buy_or_sell == 'buy':
+                    agent.state.price_each = triangular(agent.state.price_each, agent.entities_info[agent.state.fruit]['max_buying_price']*(1+agent.elasticity), agent.state.price_each)#/(1+agent.state.duration)
+                    agent.state.duration += 1
+
                 if agent.state.buy_or_sell == 'sell':
-                    agent.state.price_each -= agent.elasticity*random()/(1+agent.state.duration)
+                    agent.state.price_each = triangular(agent.entities_info[agent.state.fruit]['min_selling_price']/(1+agent.elasticity), agent.state.price_each, agent.state.price_each)#/(1+agent.state.duration)
                     agent.state.duration += 1
 
             elif isinstance(agent.state, RandomWalkState) and not agent.has_incoming_messages():
