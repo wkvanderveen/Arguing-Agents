@@ -93,7 +93,7 @@ class Agent():
                                   price_each=my_price)
                                   #ToDo: Check what is price_each.
 
-
+            # HARDCODED: generate request
             # self.generate_request(request_type='buy',
             #                       receiver=self.state.other_agent,
             #                       fruit='MANGOES',
