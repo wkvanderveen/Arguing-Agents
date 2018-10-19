@@ -22,7 +22,7 @@ class Entity():
 #This class will store last three prices of the entity.
 class EntityTimeSeries():
     def __init__(self,entity_name):
-        self.max_length = 3
+        self.max_length = 2
         self.entity_name=entity_name
         self.last_prices=collections.deque([], self.max_length) # will only keep last three prices
 
