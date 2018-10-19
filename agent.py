@@ -36,7 +36,7 @@ class Agent():
 
         self.neighbors = [None, None, None, None]
 
-        self.set_color()
+        self.set_color(max_money=constants.MONEY)
 
         self.set_entities_info()
 
@@ -190,21 +190,19 @@ class Agent():
     def set_neighbors(self, neighbors):
         self.neighbors = neighbors
 
-    def set_color(self):
-        color_range = 180
-        color_step = (color_range / (self.no_agents - 1)) * self.agent_id
-        c1 = 65 + color_range - color_step
-        color_step = max(color_step - color_range / 2, 0)
-        c2 = 255
-        c3 = 65 + color_step
+    def set_color(self, max_money):
+        intensity_range = 128
+        intensity_step = (intensity_range / max_money) * self.money + 92
+
         if isinstance(self.state, RandomWalkState):
-            color = (c1, c2, c3)
+            color = (0, intensity_step, 0)
         elif isinstance(self.state, WalkToAgentState):
-            color = (c2, 0, 0)
+            color = (intensity_step, 0, 0)
         elif isinstance(self.state, NegotiationState):
-            color = (0, 0, c2)
+            color = (0, 0, intensity_step)
         elif isinstance(self.state, WaitForResponseState):
-            color = (128, 128, 128)
+            color = (intensity_step, intensity_step, 0)
+
         self.color = color
 
     def get_color(self):

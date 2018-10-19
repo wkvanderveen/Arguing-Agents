@@ -124,6 +124,10 @@ class System():
         for name, agent in items:
             agent.set_neighbors(self.get_neighbors(agent))
             if isinstance(agent.state, NegotiationState):
+                if not isinstance(agent.state.other_agent.state, NegotiationState):
+                    agent.state = RandomWalkState(this_agent=agent)
+                    continue
+
                 time_remaining = constants.MAX_TIME - self.time
                 if agent.patience*time_remaining*0.5 < agent.state.duration or \
                     (agent.state.buy_or_sell == 'sell' and agent.state.other_agent.money < agent.state.price_each*agent.state.quantity) or \
@@ -138,12 +142,6 @@ class System():
                     if agent.state.other_agent.state.price_each <= agent.entities_info[agent.state.fruit]['max_buying_price']:
                         agent.state.accept()
                         continue
-                    """
-                    if agent.state.buy_or_sell == 'sell':
-                    if agent.state.other_agent.state.price_each >= agent.entities_info[agent.state.fruit]['min_selling_price']:
-                        agent.state.accept()
-                        continue
-                    """
 
                 # At this point, price should be further negotiated
                 if agent.state.buy_or_sell == 'buy':
@@ -167,7 +165,7 @@ class System():
                     agent.state.counter = agent.state.counter - 1
 
         for name, agent in self.agents.items():
-            agent.set_color()
+            agent.set_color(max_money=max([a.money for _, a in self.agents.items()]))
             agent.state.print_info()
             agent.freeze_movement = False
 
