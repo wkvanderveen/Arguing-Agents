@@ -76,7 +76,7 @@ class Agent():
     def search_agent(self, directions):
         if self.adjacent_to_agent(self.state.other_agent):
             print("Found target")
-            # HARDCODED: generate request
+
             entity_name=self.state.action_to_perform.entity.name
             self.generate_request(request_type=self.state.action_to_perform.type_of_action.lower(),
                                   receiver=self.state.other_agent,
@@ -88,7 +88,7 @@ class Agent():
 
                                   )#ToDo: Check what is price_each.
 
-
+            # HARDCODED: generate request
             # self.generate_request(request_type='buy',
             #                       receiver=self.state.other_agent,
             #                       fruit='MANGOES',

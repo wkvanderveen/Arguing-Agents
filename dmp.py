@@ -252,7 +252,7 @@ class DecisionMakingProcess():
         For Selling:
             (global average price - minimum selling price)/minimum selling price
             
-    Final score will be divide it by how far is the agent.
+    Final score will be divide it by how far is the agent. or we can add 1/how far agent is.
     '''
     def calculate_score_arguments(self,all_arguments):
         for x in all_arguments:
