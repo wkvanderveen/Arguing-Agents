@@ -27,7 +27,7 @@ class Agent():
         self.no_agents = no_agents
 
         self.money = constants.MONEY
-        self.elasticity = random()  # more elasticity --> accepting lower price
+        self.elasticity = uniform(0, constants.MAX_ELASTICITY)  # more elasticity --> accepting lower price
         self.patience = uniform(0, constants.MAXPATIENCE)  # More patience --> more negotiation steps
 
         self.entities_info={}
@@ -43,29 +43,29 @@ class Agent():
 
     def set_entities_info(self):
         from main import SYSTEM
-        all_entities=SYSTEM.get_all_entities()
-        choices=[True,False]
+        all_entities = SYSTEM.get_all_entities()
+        choices = [True,False]
         for entity in all_entities:
 
             if True:
                 self.set_entity_info(entity)
             else:
-                self.entities_info[entity.name]={'max_buying_price': None ,
-                                                 'min_selling_price': None,
-                                                 'quantity':None,
-                                                 'isInterested':False}
+                self.entities_info[entity.name] = {'max_buying_price': None ,
+                                                   'min_selling_price': None,
+                                                   'quantity': None,
+                                                   'isInterested': False}
 
     def set_entity_info(self,entity):
         """Randomly set prices for entities related to agent
         'isInterested' flag tells us that agent is interested in this entity
         """
-        self.entities_info[entity.name]={'max_buying_price': randint(constants.MIN_MAXBUY,
-                                                                     constants.MAX_MAXBUY) ,
-                                         'min_selling_price': randint(constants.MIN_MINSELL,
-                                                                      constants.MAX_MINSELL),
-                                         'quantity':randint(constants.MIN_QUANTITY,
-                                                            constants.MAX_QUANTITY),
-                                         'isInterested':True}
+        self.entities_info[entity.name] = {'max_buying_price': randint(constants.MIN_MAXBUY,
+                                                                       constants.MAX_MAXBUY) ,
+                                           'min_selling_price': randint(constants.MIN_MINSELL,
+                                                                        constants.MAX_MINSELL),
+                                           'quantity': randint(constants.MIN_QUANTITY,
+                                                               constants.MAX_QUANTITY),
+                                           'isInterested': True}
 
 
     def search_agent(self, directions):
@@ -88,8 +88,6 @@ class Agent():
                     self.entities_info[entity_name]['min_selling_price'] * \
                         (1+constants.starting_counter_price)))
                 my_quantity = randint(1, self.entities_info[entity_name]['quantity'])
-
-
 
             self.generate_request(request_type=buy_or_sell,
                                   receiver=self.state.other_agent,
@@ -336,28 +334,28 @@ class Agent():
                     my_price = int(
                         self.entities_info[response.request.fruit] \
                             ['max_buying_price'] \
-                            * uniform((1-self.elasticity)/2,
-                        (1-self.elasticity)))
+                            * uniform((1-self.elasticity),
+                                      (1-self.elasticity/2)))
 
                 elif response.request.request_type == 'buy': # agent is selling
                     my_price = int(
                         self.entities_info[response.request.fruit] \
                             ['min_selling_price'] \
                             * uniform(self.elasticity/2+1,
-                        self.elasticity+1))
+                                      self.elasticity+1))
 
                 self.state = NegotiationState(
                     this_agent=self,
-                    buy_or_sell=response.request.request_type,
-                    other_agent=response.sender,
-                    quantity=response.request.quantity,
-                    fruit=response.request.fruit,
-                    price_each=response.request.price_each)
-                response.sender.state = NegotiationState(
-                    this_agent=response.sender,
                     buy_or_sell=(
                         'sell' if response.request.request_type == 'buy' \
                         else 'buy'),
+                    other_agent=response.sender,
+                    quantity=response.request.quantity,
+                    fruit=response.request.fruit,
+                    price_each=my_price)
+                response.sender.state = NegotiationState(
+                    this_agent=response.sender,
+                    buy_or_sell=response.request.request_type,
                     other_agent=self,
                     quantity=response.request.quantity,
                     fruit=response.request.fruit,

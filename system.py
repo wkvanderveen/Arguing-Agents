@@ -133,7 +133,7 @@ class System():
 
                 # Accept offer if within price range
                 if agent.state.buy_or_sell == 'buy':
-                    if agent.state.other_agent.state.price_each <= agent.entities_info[agent.state.fruit]['max_buying_price']:
+                    if agent.state.other_agent.state.price_each <= agent.state.price_each:
                         agent.state.accept()
                         continue
 
@@ -143,7 +143,7 @@ class System():
                     agent.state.duration += 1
 
                 if agent.state.buy_or_sell == 'sell':
-                    agent.state.price_each = triangular(agent.entities_info[agent.state.fruit]['min_selling_price']/(1+agent.elasticity), agent.state.price_each, agent.state.price_each)#/(1+agent.state.duration)
+                    agent.state.price_each = triangular(agent.entities_info[agent.state.fruit]['min_selling_price']*(1-agent.elasticity), agent.state.price_each, agent.state.price_each)#/(1+agent.state.duration)
                     agent.state.duration += 1
 
             elif isinstance(agent.state, RandomWalkState) and not agent.has_incoming_messages():

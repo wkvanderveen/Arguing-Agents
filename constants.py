@@ -18,21 +18,24 @@ N_AGENTS = 30
 MAX_TIME = 100
 
 # agent parameters
-MONEY = 200.0  # initial money of an agent
-MAXPATIENCE = 0.4  # maximum patience an agent has
+MONEY = 500.0  # initial money of an agent
+MAXPATIENCE = 1  # maximum patience an agent has
+MAX_ELASTICITY = 0.1
 
 RANDOM_WALK = 0
 SEARCH_AGENT = 1
 NEGOTIATE = 2
 
 
-starting_counter_price = 0.01
+starting_counter_price = 0.5
 
-MIN_MAXBUY = 20
-MAX_MAXBUY = 30
 
-MIN_MINSELL = 35
-MAX_MINSELL = 45
+# Agent price and quantity range initialization
+MIN_MAXBUY = 30
+MAX_MAXBUY = 50
+
+MIN_MINSELL = 30
+MAX_MINSELL = 50
 
 MIN_QUANTITY = 0
 MAX_QUANTITY = 10
