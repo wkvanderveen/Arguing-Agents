@@ -18,11 +18,6 @@ class NegotiationState(AgentState):
         from main import SYSTEM
         self.other_agent.state = RandomWalkState(this_agent=self.other_agent)
         self.this_agent.state = RandomWalkState(this_agent=self.this_agent)
-        print("Trade cancelled between agent {0} and agent {1} after {2} turn{3}.".format(
-            self.this_agent.name,
-            self.other_agent.name,
-            self.duration,
-            ('' if self.duration == 1 else 's')))
 
         SYSTEM.update_negotiation_happened(self.this_agent.agent_id,self.other_agent.agent_id,False) #This means negative negotiation happend
 
@@ -38,21 +33,6 @@ class NegotiationState(AgentState):
 
         self.other_agent.state = RandomWalkState(this_agent=self.other_agent)
         self.this_agent.state = RandomWalkState(this_agent=self.this_agent)
-
-        print("Trade accepted! Agent {0} {1} {2} {3} for {4:.2f} {7} agent {5} after {6} steps".format(
-            self.this_agent.name,
-            mapping[self.buy_or_sell],
-            self.quantity,
-            self.fruit,
-            self.price_each * self.quantity,
-            self.other_agent.name,
-            self.duration,
-            'from' if self.buy_or_sell == 'buy' else 'to'))
-        print(self.this_agent.entities_info)
-        print(self.other_agent.entities_info)
-
-
-
 
         SYSTEM.update_negotiation_happened(self.this_agent.agent_id, self.other_agent.agent_id,
                                            True)  # This means positive negotiation happend

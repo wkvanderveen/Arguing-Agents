@@ -45,7 +45,5 @@ for i in range(constants.MAX_TIME):
 
 agents_at_end = copy.deepcopy(SYSTEM.agents)
 
-print(SYSTEM.total_negotiations)
-
 pygame.quit()
 quit()

@@ -194,8 +194,6 @@ class DecisionMakingProcess():
         self.asking_agent=asking_agent
         self.time_point=SYSTEM.time
 
-        print("Initialized DMP For Agent {}, at time {}".format(self.asking_agent.name,self.time_point))
-
 
     def create_all_arguments(self):
         self.all_buying_arguments = self.create_buying_arguments_for_agent()
@@ -263,8 +261,8 @@ class DecisionMakingProcess():
             self.calculate_score_arguments(all_arguments)
             sorted_arguments=sorted(all_arguments,key=lambda x: x.score,reverse=True)
             wining_argument=sorted_arguments[0]
-            for ar in sorted_arguments:
-                print(ar.__repr__())
+            #for ar in sorted_arguments:
+            #    print(ar.__repr__())
             return wining_argument
         else:
             return None
@@ -277,7 +275,6 @@ class DecisionMakingProcess():
         if wining_argument:
             return Action(wining_argument.type_of_action,wining_argument.agent1,wining_argument.agent2,wining_argument.entity)
 
-        print("****** NO ARGUMENT FOUND *******")
         return None
 
 

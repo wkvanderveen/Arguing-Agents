@@ -79,8 +79,6 @@ class System():
         #This is a dict to maintain price update requests coming from system in the given time step
         self.entity_global_price_updates={}
 
-        print("System initialized.")
-
     def create_agent(self, name, agent_id, no_agents, x=None, y=None):
         """Create a new Agent in the system."""
         x = randint(0, constants.TILES_X-1) if x == None else x
@@ -108,18 +106,15 @@ class System():
         shuffle(items)
 
         # Let all agents send their messages
-        print("\nSENDING MESSAGES:")
         for name, agent in items:
             agent.send_requests()
             responses_sent += agent.send_responses()
 
         # Let all agents receive messages
-        print("\nRECEIVING MESSAGES:")
         for name, agent in items:
             requests_received += agent.receive_requests()
             responses_received += agent.receive_responses()
 
-        print("\nAGENT INFO:")
         for name, agent in items:
             agent.set_neighbors(self.get_neighbors(agent))
             if isinstance(agent.state, NegotiationState):
@@ -165,7 +160,6 @@ class System():
 
         for name, agent in self.agents.items():
             agent.set_color(max_money=max([a.money for _, a in self.agents.items()]))
-            agent.state.print_info()
             agent.freeze_movement = False
 
         self.time += 1
@@ -227,13 +221,11 @@ class System():
             ttl = sum([x[1] for x in tpls])
             return sum([x[0]*x[1] for x in tpls])/ttl
 
-        print("Updating Global Average Prices of Entities ")
         for entity_name, prices in self.entity_global_price_updates.items():
             if len(prices)>0:
                 weighted_sum=_weighted_sum(prices)
                 gape=(self.entity_global_average_price.get(entity_name,weighted_sum)+weighted_sum)/2
-                self.entity_global_average_price[entity_name]=gape
-                print("\t Updated average price of entity: "+entity_name,gape)
+                self.entity_global_average_price[entity_name] = gape
 
             #Add average price to entity trend
             temp_price=self.entity_global_average_price.get(entity_name,None)
@@ -250,13 +242,13 @@ class System():
             self.price_trends[entity_name] = EntityTimeSeries(entity_name)
             entity_trend = self.price_trends[entity_name]
         entity_trend.add_price_to_time_series(price)
-
-        print("PRICE TRENDS: ")
+    """
         self.__print_price_trends()
 
     def __print_price_trends(self):
-        for key,val in self.price_trends.items():
+        for key, val in self.price_trends.items():
             print(key,val.__repr__())
+    """
 
     def reset_enity_global_price_updates_dict(self):
         self.entity_global_price_updates=dict()
@@ -347,8 +339,8 @@ class System():
 
     def print_info(self):
         """Print the information about the system."""
-        print("Time = {0}.\nNumber of agents = {1}.\n".format(
-            self.time, len(self.agents)))
+        print("Time = {0}.\n".format(
+            self.time))
 
 
     '''
