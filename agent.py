@@ -57,7 +57,7 @@ class Agent():
         all_entities=SYSTEM.get_all_entities()
         choices=[True,False]
         for entity in all_entities:
-            # if choices[randint(0,1)]:
+
             if True:
                 self.set_entity_info(entity)
             else:
@@ -70,9 +70,12 @@ class Agent():
         """Randomly set prices for entities related to agent
         'isInterested' flag tells us that agent is interested in this entity
         """
-        self.entities_info[entity.name]={'max_buying_price': randint(40, 55) ,
-                                         'min_selling_price': randint(40, 55),
-                                         'quantity':randint(1, 10),
+        self.entities_info[entity.name]={'max_buying_price': randint(constants.MIN_MAXBUY,
+                                                                     constants.MAX_MAXBUY) ,
+                                         'min_selling_price': randint(constants.MIN_MINSELL,
+                                                                      constants.MAX_MINSELL),
+                                         'quantity':randint(constants.MIN_QUANTITY,
+                                                            constants.MAX_QUANTITY),
                                          'isInterested':True}
 
 
