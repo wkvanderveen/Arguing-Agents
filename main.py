@@ -9,6 +9,7 @@ from system import System
 from message import BaseMessage
 from grid import *
 from agentstate import *
+from make_csv import MakeCsv
 
 display = True
 SYSTEM = System(display)
@@ -45,5 +46,6 @@ for i in range(constants.MAX_TIME):
 
 agents_at_end = copy.deepcopy(SYSTEM.agents)
 
+MakeCsv().make_csv()
 pygame.quit()
 quit()

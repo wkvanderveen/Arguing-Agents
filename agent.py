@@ -40,6 +40,17 @@ class Agent():
 
         self.set_entities_info()
 
+        self.entities_value_start=self.cal_entities_value_in_start()
+
+    def cal_entities_value_in_start(self):
+        entities_of_agent = self.entities_info.items()
+        total_quantity_price = 0
+        for entity_name, value in entities_of_agent:
+            entity_info = self.entities_info[entity_name]
+            if entity_info['isInterested']:
+                gap = (entity_info['min_selling_price']+ entity_info['max_buying_price']) / 2
+                total_quantity_price += gap * entity_info['quantity']
+        return total_quantity_price
 
     def set_entities_info(self):
         from main import SYSTEM

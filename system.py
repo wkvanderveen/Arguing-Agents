@@ -21,7 +21,7 @@ class Entity():
 #This class will store last three prices of the entity.
 class EntityTimeSeries():
     def __init__(self,entity_name):
-        self.max_length = 3
+        self.max_length = 2
         self.entity_name=entity_name
         self.last_prices=collections.deque([], self.max_length) # will only keep last three prices
 
@@ -354,5 +354,17 @@ class System():
         negotiations=self.total_negotiations[agent1_id][agent2_id]
         return (negotiations[0]+negotiations[1]+1,negotiations[0],negotiations[1]) #This will return total , total positive , total negative
 
+
+    def get_negotiations_parameter_of_agent(self,agent_id):
+        negotiations = self.total_negotiations[agent_id]
+        total=0
+        pos=0
+        neg=0
+        for temp in negotiations:
+            total+=temp[0] + temp[1]
+            pos+=temp[0]
+            neg+=temp[1]
+
+        return (total,pos,neg)
 
 
