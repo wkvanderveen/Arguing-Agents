@@ -242,13 +242,6 @@ class System():
             self.price_trends[entity_name] = EntityTimeSeries(entity_name)
             entity_trend = self.price_trends[entity_name]
         entity_trend.add_price_to_time_series(price)
-    """
-        self.__print_price_trends()
-
-    def __print_price_trends(self):
-        for key, val in self.price_trends.items():
-            print(key,val.__repr__())
-    """
 
     def reset_enity_global_price_updates_dict(self):
         self.entity_global_price_updates=dict()
@@ -342,11 +335,6 @@ class System():
         print("Time = {0}.\n".format(
             self.time))
 
-
-    '''
-    We can keep negotiation count as the property of agent, whcih makes sense, but we are using it as an argument in dmp, so keeping it over here.
-    We can change this later.
-    '''
     #Initialize total negotiations.
     def initialize_total_negotiations_count(self):
         agents = self.get_all_agents_in_list()
