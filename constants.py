@@ -15,7 +15,7 @@ WEST = 3
 INF = 9999999
 
 N_AGENTS = 20
-MAX_TIME = 1000
+MAX_TIME = 2000
 
 # agent parameters
 MONEY = 500.0  # initial money of an agent
@@ -33,8 +33,8 @@ BFS = False
 
 
 # Agent price and quantity range initialization
-MIN_MAXBUY = 30
-MAX_MAXBUY = 50
+MIN_MAXBUY = 25
+MAX_MAXBUY = 35
 
 MIN_MINSELL = 30
 MAX_MINSELL = 50
@@ -48,8 +48,8 @@ RECTDIST = 1  # size of borders between tiles
 RECTSIZE = 40  # size of tiles
 MAX_UPDATES_PER_S = 10
 
-TILES_X = 15  # number of tiles on each row
-TILES_Y = 15  # number of tiles in each column
+TILES_X = 25  # number of tiles on each row
+TILES_Y = 25  # number of tiles in each column
 
 WIDTH = TILES_X * (RECTDIST + RECTSIZE) + RECTDIST
 HEIGHT = TILES_Y * (RECTDIST + RECTSIZE) + RECTDIST
