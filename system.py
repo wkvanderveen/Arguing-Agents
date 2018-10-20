@@ -376,4 +376,16 @@ class System():
         return (negotiations[0]+negotiations[1]+1,negotiations[0],negotiations[1]) #This will return total , total positive , total negative
 
 
+    def get_negotiations_parameter_of_agent(self,agent_id):
+        negotiations = self.total_negotiations[agent_id]
+        total=0
+        pos=0
+        neg=0
+        for temp in negotiations:
+            total+=temp[0] + temp[1]
+            pos+=temp[0]
+            neg+=temp[1]
+
+        return (total,pos,neg)
+
 

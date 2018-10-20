@@ -66,6 +66,11 @@ class ArgumentSet():
         self.entity=entity
         self.score=float('-inf')
 
+        self.part_a = 'N/A'
+        self.part_b = 'N/A'
+        self.part_c = 'N/A'
+        self.md = 'N/A'
+
     # # Case of can not say will also make argument valid
     # def __price_is_going_up(self):
     #     t=SYSTEM.is_price_going_up(self.entity.name)
