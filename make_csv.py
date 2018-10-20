@@ -13,15 +13,17 @@ class MakeCsv():
                                    'Total Negotiations',
                                    'Total Positive',
                                    'Total Negative',
-                                   'Entities Value']
+                                   'Entities Value Start',
+                                   'Entities Value End']
                           )
-
+        i=0
         for agent in all_agents:
             negotiation_param=SYSTEM.get_negotiations_parameter_of_agent(agent.agent_id)
+            entities_value_in_start=agent.cal_entities_value_in_start()
 
             entities_of_agent = agent.entities_info.items()
             total_quantity_price=0
-            for entity_name in entities_of_agent:
+            for entity_name,value in entities_of_agent:
                 entity_info = agent.entities_info[entity_name]
                 if entity_info['isInterested']:
                     gap=SYSTEM.get_entity_global_average_price(entity_name)
@@ -33,13 +35,18 @@ class MakeCsv():
 
 
             #elasticity,paience,money,total_negotiations,total_positive,total_negative,quantity value
-            df.append([agent.elasticity,
+
+
+            df.loc[i]=[agent.elasticity,
                       agent.patience,
                       agent.money,
                       negotiation_param[0],
                       negotiation_param[1],
                       negotiation_param[2],
-                      total_quantity_price])
+                      entities_value_in_start,
+                      total_quantity_price]
+
+            i+=1
 
 
-            print(df)
+        print(df)

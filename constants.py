@@ -14,7 +14,8 @@ WEST = 3
 
 INF = 9999999
 
-N_AGENTS = 20
+
+N_AGENTS = 10
 MAX_TIME = 100
 
 # agent parameters
