@@ -10,8 +10,13 @@ from message import BaseMessage
 from grid import *
 from agentstate import *
 from make_csv import MakeCsv
+import constants
+from tqdm import tqdm
 
+
+agents_at_end = []
 display = False
+
 SYSTEM = System(display)
 
 # Create agents
@@ -24,9 +29,9 @@ SYSTEM.initialize_total_negotiations_count()
 
 agents_at_start = copy.deepcopy(SYSTEM.agents)
 
-for i in range(constants.MAX_TIME):
-    print("\nUpdating system...\n{}\n".format('-' * 56))
-    SYSTEM.print_info()
+for i in tqdm(range(constants.MAX_TIME)):
+    # print("\nUpdating system...\n{}\n".format('-' * 56))
+    # SYSTEM.print_info()
 
     for name, agent in SYSTEM.agents.items():
         if isinstance(agent.state, RandomWalkState):
@@ -44,8 +49,12 @@ for i in range(constants.MAX_TIME):
         print("Aborted system!")
         break
 
-agents_at_end = copy.deepcopy(SYSTEM.agents)
+for name, agent in SYSTEM.agents.items():
+    print(agent.name)
+    agents_at_end.append(copy.deepcopy(agent))
 
-MakeCsv().make_csv(sort_by='Earnings')
 pygame.quit()
+
+MakeCsv().make_csv(agents_at_end, sort_by='Earnings')
 quit()
+

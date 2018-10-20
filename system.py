@@ -50,7 +50,6 @@ class EntityTimeSeries():
         return self.last_prices
 
 
-
 #We can convert SYSTEM class to singleton
 class System():
     """docstring for System"""

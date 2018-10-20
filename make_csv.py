@@ -6,10 +6,10 @@ from matplotlib import pyplot as plt
 import datetime
 
 class MakeCsv():
-    def make_csv(self, sort_by):
+    def make_csv(self, all_agents, sort_by):
         from main import SYSTEM
 
-        all_agents=SYSTEM.get_all_agents_in_list()
+        # all_agents=SYSTEM.get_all_agents_in_list()
 
         df = pd.DataFrame(columns=['elasticity',
                                    'patience',
