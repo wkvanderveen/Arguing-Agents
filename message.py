@@ -1,8 +1,6 @@
 """docstring placeholder"""
 from abc import ABC, abstractmethod
 
-from evaluation import BaseEvaluationProcess
-
 from agentstate import NegotiationState, WalkToAgentState, RandomWalkState
 
 class BaseMessage(ABC):

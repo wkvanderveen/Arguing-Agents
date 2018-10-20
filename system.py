@@ -18,7 +18,6 @@ class Entity():
     def __init__(self,name):
         self.name=name
 
-
 #This class will store last three prices of the entity.
 class EntityTimeSeries():
     def __init__(self,entity_name):
