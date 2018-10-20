@@ -1,5 +1,6 @@
 import pandas as pd
 
+import datetime
 
 class MakeCsv():
     def make_csv(self):
@@ -50,3 +51,5 @@ class MakeCsv():
 
 
         print(df)
+
+        df.to_csv('results/'+str(datetime.datetime.now())+".csv")
