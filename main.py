@@ -11,7 +11,7 @@ from grid import *
 from agentstate import *
 from make_csv import MakeCsv
 
-display = True
+display = False
 SYSTEM = System(display)
 
 # Create agents
@@ -46,6 +46,6 @@ for i in range(constants.MAX_TIME):
 
 agents_at_end = copy.deepcopy(SYSTEM.agents)
 
-MakeCsv().make_csv()
+MakeCsv().make_csv(sort_by='Earnings')
 pygame.quit()
 quit()

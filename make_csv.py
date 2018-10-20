@@ -1,21 +1,27 @@
 import pandas as pd
+import constants
+from matplotlib import pyplot as plt
+
 
 import datetime
 
 class MakeCsv():
-    def make_csv(self):
+    def make_csv(self, sort_by):
         from main import SYSTEM
 
         all_agents=SYSTEM.get_all_agents_in_list()
 
         df = pd.DataFrame(columns=['elasticity',
-                                   'paience',
+                                   'patience',
                                    'money',
                                    'Total Negotiations',
                                    'Total Positive',
                                    'Total Negative',
                                    'Entities Value Start',
-                                   'Entities Value End']
+                                   'Entities Value End',
+                                   'Total Final Value',
+                                   'Total Starting Value',
+                                   'Earnings']
                           )
         i=0
         for agent in all_agents:
@@ -37,7 +43,8 @@ class MakeCsv():
 
             #elasticity,paience,money,total_negotiations,total_positive,total_negative,quantity value
 
-
+            val_start=constants.MONEY+entities_value_in_start
+            val_end=agent.money+total_quantity_price
             df.loc[i]=[agent.elasticity,
                       agent.patience,
                       agent.money,
@@ -45,11 +52,18 @@ class MakeCsv():
                       negotiation_param[1],
                       negotiation_param[2],
                       entities_value_in_start,
-                      total_quantity_price]
+                      total_quantity_price,
+                      val_end,
+                      val_start,
+                      val_end-val_start
+                      ]
 
             i+=1
 
-
+        df = df.sort_values(sort_by)
         print(df)
 
         df.to_csv('results/'+str(datetime.datetime.now())+".csv")
+        df.plot(x='Earnings', y=['elasticity', 'patience'])
+        plt.show()
+
