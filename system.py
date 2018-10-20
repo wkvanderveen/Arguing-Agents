@@ -173,7 +173,7 @@ class System():
 
             # update
             pygame.display.update()
-            time.sleep(0.2)
+            time.sleep(0.05)
             closed = self.control.check_events()
 
         return closed
