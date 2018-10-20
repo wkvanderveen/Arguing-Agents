@@ -26,7 +26,7 @@ SEARCH_AGENT = 1
 NEGOTIATE = 2
 
 
-starting_counter_price = 0.0001
+starting_counter_price = 0.01
 
 MIN_MAXBUY = 20
 MAX_MAXBUY = 30

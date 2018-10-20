@@ -78,16 +78,23 @@ class Agent():
                         ['max_buying_price'] \
                         * (1-constants.starting_counter_price),
                     self.entities_info[entity_name]['max_buying_price']))
+                if self.state.other_agent.entities_info[entity_name]['quantity'] <= 0:
+                    self.state = RandomWalkState(self)
+                    return
+                my_quantity = randint(1, self.state.other_agent.entities_info[entity_name]['quantity'])
             elif buy_or_sell == 'sell':
                 my_price = int(uniform(self.entities_info[entity_name] \
                         ['min_selling_price'],
                     self.entities_info[entity_name]['min_selling_price'] * \
                         (1+constants.starting_counter_price)))
+                my_quantity = randint(1, self.entities_info[entity_name]['quantity'])
+
+
 
             self.generate_request(request_type=buy_or_sell,
                                   receiver=self.state.other_agent,
                                   fruit=entity_name,
-                                  quantity=randint(1, 10),
+                                  quantity=my_quantity,
                                   price_each=my_price)
 
         elif not self.move_towards_target(directions):
