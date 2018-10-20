@@ -275,23 +275,29 @@ class System():
 
     def find_path(self, agent):
         target = agent.state.other_agent
-        distances = [constants.INF, constants.INF, constants.INF, constants.INF]  # [north, east, south, west]
         directions = []
+        if constants.BFS:
+            distances = [constants.INF, constants.INF, constants.INF, constants.INF]  # [north, east, south, west]
 
-        distances[constants.NORTH] = self.bfs((agent.x, agent.y - 1), (target.x, target.y))
-        distances[constants.EAST] = self.bfs((agent.x + 1, agent.y), (target.x, target.y))
-        distances[constants.SOUTH] = self.bfs((agent.x, agent.y + 1), (target.x, target.y))
-        distances[constants.WEST] = self.bfs((agent.x - 1, agent.y), (target.x, target.y))
+            distances[constants.NORTH] = self.bfs((agent.x, agent.y - 1), (target.x, target.y))
+            distances[constants.EAST] = self.bfs((agent.x + 1, agent.y), (target.x, target.y))
+            distances[constants.SOUTH] = self.bfs((agent.x, agent.y + 1), (target.x, target.y))
+            distances[constants.WEST] = self.bfs((agent.x - 1, agent.y), (target.x, target.y))
 
-        min_dist = min(distances)
+            min_dist = min(distances)
 
-        if min_dist == constants.INF:
-            return directions
+            if min_dist == constants.INF:
+                return directions
 
-        if distances[constants.NORTH] == min_dist: directions.append(constants.NORTH)
-        if distances[constants.EAST] == min_dist: directions.append(constants.EAST)
-        if distances[constants.SOUTH] == min_dist: directions.append(constants.SOUTH)
-        if distances[constants.WEST] == min_dist: directions.append(constants.WEST)
+            if distances[constants.NORTH] == min_dist: directions.append(constants.NORTH)
+            if distances[constants.EAST] == min_dist: directions.append(constants.EAST)
+            if distances[constants.SOUTH] == min_dist: directions.append(constants.SOUTH)
+            if distances[constants.WEST] == min_dist: directions.append(constants.WEST)
+        else:
+            if target.y < agent.y: directions.append(constants.NORTH) # North
+            if target.x > agent.x: directions.append(constants.EAST) # East
+            if target.y > agent.y: directions.append(constants.SOUTH) # South
+            if target.x < agent.x: directions.append(constants.WEST) # West
 
         return directions
 
