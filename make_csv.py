@@ -63,7 +63,7 @@ class MakeCsv():
         df = df.sort_values(sort_by)
         print(df)
 
-        df.to_csv('results/time=1000_nAgents=20_elasticity=1_fixed_bug/'+str(datetime.datetime.now())+".csv")
+        df.to_csv('results/'+str(datetime.datetime.now())+".csv")
         df.plot(x='Earnings', y=['elasticity', 'patience'])
         plt.show()
 

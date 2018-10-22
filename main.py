@@ -15,7 +15,7 @@ from tqdm import tqdm
 
 
 agents_at_end = []
-display = False
+display = True
 
 SYSTEM = System(display)
 
