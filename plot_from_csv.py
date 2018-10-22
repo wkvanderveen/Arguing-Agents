@@ -6,6 +6,12 @@ import numpy as np
 from scipy import stats
 
 
+def report_p(p):
+    if p.round(3) < 0.001:
+        return "<0.001"
+    else:
+        return str(p.round(3))
+
 
 def main(argv):
     dfs = []
@@ -13,53 +19,36 @@ def main(argv):
     for file_name in file_names:
         dfs.append(pd.read_csv(file_name))
 
-    this_color = 0
-    for df in dfs:
-        df['color'] = [this_color] * df.shape[0]
-        this_color = this_color + 1
-
     df = pd.concat(dfs)
 
+    # sub_plots = [121, 122]
+    x_labels = ['elasticity', 'patience']
+    color_map_labels = ['patience', 'elasticity']
+    file_names = ['elasticity.pdf', 'patience.pdf']
+    for i in [0, 1]:
+        x_label = x_labels[i]
+        df = df.sort_values(x_label)
+        x = df[x_label]
+        y = df['Earnings']
+        # plt.subplot(sub_plots[i])
+        plt.scatter(x, y, c=df[color_map_labels[i]])
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        plt.plot(x, p(x), "r--")
+        print("y=%.6fx+(%.6f)" % (z[0], z[1]))
+        pr = stats.pearsonr(x, y)
 
-    x_label = 'elasticity'
-    x2_label = 'patience'
+        plt.title("Pearson-R correlation coefficient = {0}, p-value = {1}".format(pr[0].round(3), report_p(pr[1])))
+        plt.xlabel(x_label)
+        plt.ylabel("Earnings")
+        plt.colorbar()
+        plt.savefig('img/' + file_names[i])
+        print("saved file to {0}".format('img/' + file_names[i]))
+        print()
 
-    df = df.sort_values(x_label)
-    df2 = df.sort_values(x2_label)
+        # plt.show()
 
-    x = df[x_label]
-    x2 = df2[x2_label]
-    y = df['Earnings']
-    y2 = df2['Earnings']
-
-    plt.subplot(121)
-    plt.scatter(x, y, c=df['patience'])
-    z = np.polyfit(x, y, 1)
-    p = np.poly1d(z)
-    plt.plot(x, p(x), "r--")
-    print("y=%.6fx+(%.6f)" % (z[0], z[1]))
-    pr = stats.pearsonr(x, y)
-    plt.title("Correlation between patience and earnings. Pearson-R correlation coefficient = {0}".format(pr[0].round(3)))
-    plt.xlabel(x_label)
-    plt.ylabel("Earnings")
-    plt.colorbar()
-
-
-    plt.subplot(122)
-    plt.scatter(x2, y2, c=df2['elasticity'])
-    z2 = np.polyfit(x2, y2, 1)
-    p2 = np.poly1d(z2)
-    plt.plot(x2, p2(x2), "r--")
-    print("y2=%.6fx2+(%.6f)" % (z2[0], z2[1]))
-    pr2 = stats.pearsonr(x2, y2)
-
-    plt.xlabel(x2_label)
-    plt.colorbar()
-    plt.legend()
-
-    plt.show()
-
-    print(df)
+    # print(df)
 
 
 if __name__ == "__main__":
