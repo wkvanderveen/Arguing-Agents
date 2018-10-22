@@ -6,10 +6,7 @@ import numpy as np
 from scipy import stats
 
 def report_p(p):
-    if p.round(3) < 0.001:
-        return "<0.001"
-    else:
-        return str(p.round(3))
+    return "<0.001" if p.round(3) < 0.001 else str(p.round(3))
 
 def main(argv):
     dfs = []
@@ -22,7 +19,8 @@ def main(argv):
     # sub_plots = [121, 122]
     x_labels = ['elasticity', 'patience']
     color_map_labels = ['patience', 'elasticity']
-    file_names = ['elasticity.pdf', 'patience.pdf']
+    file_names = ['elasticity', 'patience']
+    file_extension = ".pdf"
     for i in [0, 1]:
         x_label = x_labels[i]
         df = df.sort_values(x_label)
@@ -39,12 +37,13 @@ def main(argv):
         plt.title("Pearson-R correlation coefficient = {0}, p-value = {1}".format(pr[0].round(3), report_p(pr[1])))
         plt.xlabel(x_label)
         plt.ylabel("Earnings")
-        plt.colorbar()
-        plt.savefig('img/' + file_names[i])
-        print("saved file to {0}".format('img/' + file_names[i]))
-        print()
 
-        # plt.show()
+        plt.colorbar().set_label(color_map_labels[i])
+
+        plt.savefig('img/' + file_names[i])
+        print("saved file to {0}".format('img/' + file_names[i] + file_extension))
+        print()
+        plt.clf()
 
 
 if __name__ == "__main__":
