@@ -109,10 +109,10 @@ class ArgumentSet():
     def __agent_has_entity(self):
         if self.type_of_action == 'BUY':
             return (self.agent2.entities_info[self.entity.name]['isInterested'] and
-                    self.agent2.entities_info[self.entity.name]['quantity'])
+                    self.agent2.entities_info[self.entity.name]['quantity']>0)
         else:
             return (self.agent1.entities_info[self.entity.name]['isInterested'] and
-                    self.agent1.entities_info[self.entity.name]['quantity'])
+                    self.agent1.entities_info[self.entity.name]['quantity']>0)
 
     def __agent_has_cash_for_entity(self):
         if self.type_of_action == 'BUY':

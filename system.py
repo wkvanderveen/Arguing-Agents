@@ -27,7 +27,7 @@ class EntityTimeSeries():
 
     def is_price_going_down(self):
         s=zip(list(self.last_prices), list(self.last_prices)[1:])
-        l = [x < y for x, y in s]
+        l = [x > y for x, y in s]
         return ('CAN TELL',all(l)) if len(l) > 0 else ('CAN NOT TELL',False)
 
     def is_price_going_up(self):
