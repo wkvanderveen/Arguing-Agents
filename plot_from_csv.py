@@ -4,11 +4,9 @@ import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
 
-
-
 def main(argv):
     dfs = []
-    file_names = glob.glob('results/time=1000_nAgents=20/*.csv')
+    file_names = glob.glob('results/*.csv')
     for file_name in file_names:
         dfs.append(pd.read_csv(file_name))
 

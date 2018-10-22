@@ -15,7 +15,7 @@ from tqdm import tqdm
 
 
 agents_at_end = []
-display = False
+display = True
 
 SYSTEM = System(display)
 
@@ -30,9 +30,6 @@ SYSTEM.initialize_total_negotiations_count()
 agents_at_start = copy.deepcopy(SYSTEM.agents)
 
 for i in tqdm(range(constants.MAX_TIME)):
-    # print("\nUpdating system...\n{}\n".format('-' * 56))
-    # SYSTEM.print_info()
-
     for name, agent in SYSTEM.agents.items():
         if isinstance(agent.state, RandomWalkState):
             from dmp import DecisionMakingProcess

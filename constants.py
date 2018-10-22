@@ -14,13 +14,13 @@ WEST = 3
 
 INF = 9999999
 
-N_AGENTS = 20
-MAX_TIME = 2000
+N_AGENTS = 80
+MAX_TIME = 5000
 
 # agent parameters
 MONEY = 500.0  # initial money of an agent
 MAXPATIENCE = 1  # maximum patience an agent has
-MAX_ELASTICITY = 0.1
+MAX_ELASTICITY = 1
 
 RANDOM_WALK = 0
 SEARCH_AGENT = 1

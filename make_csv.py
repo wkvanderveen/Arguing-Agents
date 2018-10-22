@@ -40,9 +40,6 @@ class MakeCsv():
 
                     total_quantity_price+=gap*entity_info['quantity']
 
-
-            #elasticity,paience,money,total_negotiations,total_positive,total_negative,quantity value
-
             val_start=constants.MONEY+entities_value_in_start
             val_end=agent.money+total_quantity_price
             df.loc[i]=[agent.elasticity,
