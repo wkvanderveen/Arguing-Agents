@@ -61,6 +61,4 @@ class MakeCsv():
         print(df)
 
         df.to_csv('results/'+str(datetime.datetime.now())+".csv")
-        df.plot(x='Earnings', y=['elasticity', 'patience'])
-        plt.show()
 

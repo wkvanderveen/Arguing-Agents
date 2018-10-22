@@ -47,7 +47,6 @@ for i in tqdm(range(constants.MAX_TIME)):
         break
 
 for name, agent in SYSTEM.agents.items():
-    print(agent.name)
     agents_at_end.append(copy.deepcopy(agent))
 
 pygame.quit()
