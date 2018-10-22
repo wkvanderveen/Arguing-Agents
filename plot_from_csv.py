@@ -5,17 +5,12 @@ from matplotlib import pyplot as plt
 import numpy as np
 from scipy import stats
 
-<<<<<<< HEAD
-=======
-
 def report_p(p):
     if p.round(3) < 0.001:
         return "<0.001"
     else:
         return str(p.round(3))
 
-
->>>>>>> 2e695fcb7caf23d49e0f8f6f0dd14b242dcc92e8
 def main(argv):
     dfs = []
     file_names = glob.glob('results/*.csv')
