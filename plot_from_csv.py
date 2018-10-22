@@ -7,11 +7,7 @@ from scipy import stats
 
 def main(argv):
     dfs = []
-<<<<<<< HEAD
     file_names = glob.glob('results/*.csv')
-=======
-    file_names = glob.glob('results/time=1000_nAgents=20_elasticity=1_fixed_bug/*.csv')
->>>>>>> 64a561557f4ec6dc3a8c25b1d81605ae68d01d23
     for file_name in file_names:
         dfs.append(pd.read_csv(file_name))
 
@@ -35,13 +31,14 @@ def main(argv):
     y2 = df2['Earnings']
 
     plt.subplot(121)
-    plt.scatter(x, y, c=df['patience'])
+    plt.scatter(x, y, c=df[x_label])
     z = np.polyfit(x, y, 1)
     p = np.poly1d(z)
     plt.plot(x, p(x), "r--")
     print("y=%.6fx+(%.6f)" % (z[0], z[1]))
     pr = stats.pearsonr(x, y)
-    plt.title("Correlation between patience and earnings. Pearson-R correlation coefficient = {0}".format(pr[0].round(3)))
+    plt.title("Correlation between {0} and earnings. Pearson-R correlation coefficient = {1}".\
+        format(x_label, pr[0].round(3)))
     plt.xlabel(x_label)
     plt.ylabel("Earnings")
     plt.colorbar()
@@ -54,10 +51,10 @@ def main(argv):
     plt.plot(x2, p2(x2), "r--")
     print("y2=%.6fx2+(%.6f)" % (z2[0], z2[1]))
     pr2 = stats.pearsonr(x2, y2)
-
+    plt.title("Correlation between {0} and earnings. Pearson-R correlation coefficient = {1}".\
+        format(x2_label, pr2[0].round(3)))
     plt.xlabel(x2_label)
     plt.colorbar()
-    plt.legend()
 
     plt.show()
 
