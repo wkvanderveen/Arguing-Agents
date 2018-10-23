@@ -40,9 +40,10 @@ def main(argv):
 
         plt.colorbar().set_label(color_map_labels[i])
 
-        plt.savefig('img/' + file_names[i])
+        plt.savefig('img/' + file_names[i] + file_extension)
         print("saved file to {0}".format('img/' + file_names[i] + file_extension))
         print()
+        plt.show()
         plt.clf()
 
 

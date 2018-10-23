@@ -1,23 +1,18 @@
-"""Docstring for main.py"""
+"""This is the main script to run the simulation."""
 
-from random import random
 import pygame
 import constants
-import copy
+from copy import deepcopy
 import json
 from system import System
 from message import BaseMessage
-from grid import *
-from agentstate import *
+import agentstate
 from make_csv import MakeCsv
-import constants
 from tqdm import tqdm
 
+DISPLAY = True
 
-agents_at_end = []
-display = True
-
-SYSTEM = System(display)
+SYSTEM = System(DISPLAY)
 
 # Create agents
 for agent_idx in range(constants.N_AGENTS):
@@ -27,17 +22,15 @@ for agent_idx in range(constants.N_AGENTS):
 
 SYSTEM.initialize_total_negotiations_count()
 
-agents_at_start = copy.deepcopy(SYSTEM.agents)
-
 for i in tqdm(range(constants.MAX_TIME)):
     for name, agent in SYSTEM.agents.items():
-        if isinstance(agent.state, RandomWalkState):
+        if isinstance(agent.state, agentstate.RandomWalkState):
             from dmp import DecisionMakingProcess
             dmp = DecisionMakingProcess(agent)
             decision = dmp.make_decision()
 
             if decision:
-                agent.state = WalkToAgentState(
+                agent.state = agentstate.WalkToAgentState(
                     this_agent=agent,
                     other_agent=decision.performed_on_agent,
                     action_to_perform=decision)
@@ -46,11 +39,10 @@ for i in tqdm(range(constants.MAX_TIME)):
         print("Aborted system!")
         break
 
-for name, agent in SYSTEM.agents.items():
-    agents_at_end.append(copy.deepcopy(agent))
-
 pygame.quit()
 
-MakeCsv().make_csv(agents_at_end, sort_by='Earnings')
-quit()
+MakeCsv().make_csv(
+    all_agents=[deepcopy(agent) for _, agent in SYSTEM.agents.items()],
+    sort_by='Earnings')
 
+quit()

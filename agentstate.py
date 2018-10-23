@@ -38,16 +38,6 @@ class NegotiationState(AgentState):
         self.other_agent.state = RandomWalkState(this_agent=self.other_agent)
         self.this_agent.state = RandomWalkState(this_agent=self.this_agent)
 
-        # print("Trade accepted! Agent {0} {1} {2} {3} for {4:.2f} {7} agent {5} after {6} steps".format(
-        #     self.this_agent.name,
-        #     mapping[self.buy_or_sell],
-        #     self.quantity,
-        #     self.fruit,
-        #     self.price_each * self.quantity,
-        #     self.other_agent.name,
-        #     self.duration,
-        #     'from' if self.buy_or_sell == 'buy' else 'to'))
-
         SYSTEM.update_negotiation_happened(self.this_agent.agent_id, self.other_agent.agent_id,
                                            True)  # This means positive negotiation happend
 

@@ -98,12 +98,12 @@ class ArgumentSet():
 
     def __agent_is_reachable(self):
         timeleft=timesteps-SYSTEM.time
-        manhattan_distance_between_agents=abs(self.agent1.x - self.agent2.x)+abs(self.agent1.y-self.agent2.y)+2
+        manhattan_distance_between_agents = abs(self.agent1.x_pos - self.agent2.x_pos)+abs(self.agent1.y_pos-self.agent2.y_pos)+2
         return timeleft>manhattan_distance_between_agents
 
 
     def __how_far_are_agents(self):
-        manhattan_distance_between_agents = abs(self.agent1.x - self.agent2.x) + abs(self.agent1.y - self.agent2.y)
+        manhattan_distance_between_agents = abs(self.agent1.x_pos - self.agent2.x_pos) + abs(self.agent1.y_pos - self.agent2.y_pos)
         return manhattan_distance_between_agents
 
     def __agent_has_entity(self):

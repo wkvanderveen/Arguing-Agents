@@ -85,14 +85,13 @@ class System():
         new_agent = Agent(name=name,
                           agent_id=agent_id,
                           no_agents=no_agents,
-                          x=x,
-                          y=y)
+                          x_pos=x,
+                          y_pos=y)
 
         self.agents[name] = new_agent
 
     def advance(self):
         """Advance the time by a value of 1."""
-
 
         requests_sent = 0
         requests_received = 0
@@ -115,7 +114,7 @@ class System():
             responses_received += agent.receive_responses()
 
         for name, agent in items:
-            agent.set_neighbors(self.get_neighbors(agent))
+            agent.neighbors = self.get_neighbors(agent)
             if isinstance(agent.state, NegotiationState):
                 if not isinstance(agent.state.other_agent.state, NegotiationState):
                     agent.state = RandomWalkState(this_agent=agent)
@@ -145,10 +144,10 @@ class System():
                     agent.state.price_each = triangular(agent.entities_info[agent.state.fruit]['min_selling_price']*(1-agent.elasticity), agent.state.price_each, agent.state.price_each)#/(1+agent.state.duration)
                     agent.state.duration += 1
 
-            elif isinstance(agent.state, RandomWalkState) and not agent.has_incoming_messages():
+            elif isinstance(agent.state, RandomWalkState) and not agent.incoming_requests and not agent.incoming_responses :
                 agent.random_walk()
 
-            elif isinstance(agent.state, WalkToAgentState) and not agent.has_incoming_messages():
+            elif isinstance(agent.state, WalkToAgentState) and not agent.incoming_requests and not agent.incoming_responses:
                 agent.search_agent(self.find_path(agent))
 
             elif isinstance(agent.state, WaitForResponseState):
@@ -172,7 +171,7 @@ class System():
 
             # update
             pygame.display.update()
-            time.sleep(0)
+            time.sleep(0.05)
             closed = self.control.check_events()
 
         return closed
@@ -181,13 +180,13 @@ class System():
     def get_neighbors(self, agent):
         neighbors = [None, None, None, None]  # [North, East, South, West]
         for name, possible_neighbor in self.agents.items():
-            if possible_neighbor.x == agent.x and possible_neighbor.y == (agent.y - 1):
+            if possible_neighbor.x_pos == agent.x_pos and possible_neighbor.y_pos == (agent.y_pos - 1):
                 neighbors[constants.NORTH] = possible_neighbor
-            if possible_neighbor.x == (agent.x + 1) and possible_neighbor.y == agent.y:
+            if possible_neighbor.x_pos == (agent.x_pos + 1) and possible_neighbor.y_pos == agent.y_pos:
                 neighbors[constants.EAST] = possible_neighbor
-            if possible_neighbor.x == agent.x and possible_neighbor.y == (agent.y + 1):
+            if possible_neighbor.x_pos == agent.x_pos and possible_neighbor.y_pos == (agent.y_pos + 1):
                 neighbors[constants.SOUTH] = possible_neighbor
-            if possible_neighbor.x == (agent.x - 1) and possible_neighbor.y == agent.y:
+            if possible_neighbor.x_pos == (agent.x_pos - 1) and possible_neighbor.y_pos == agent.y_pos:
                 neighbors[constants.WEST] = possible_neighbor
         return neighbors
 
@@ -274,10 +273,10 @@ class System():
         if constants.BFS:
             distances = [constants.INF, constants.INF, constants.INF, constants.INF]  # [north, east, south, west]
 
-            distances[constants.NORTH] = self.bfs((agent.x, agent.y - 1), (target.x, target.y))
-            distances[constants.EAST] = self.bfs((agent.x + 1, agent.y), (target.x, target.y))
-            distances[constants.SOUTH] = self.bfs((agent.x, agent.y + 1), (target.x, target.y))
-            distances[constants.WEST] = self.bfs((agent.x - 1, agent.y), (target.x, target.y))
+            distances[constants.NORTH] = self.bfs((agent.x_pos, agent.y_pos - 1), (target.x_pos, target.y_pos))
+            distances[constants.EAST] = self.bfs((agent.x_pos + 1, agent.y_pos), (target.x_pos, target.y_pos))
+            distances[constants.SOUTH] = self.bfs((agent.x_pos, agent.y_pos + 1), (target.x_pos, target.y_pos))
+            distances[constants.WEST] = self.bfs((agent.x_pos - 1, agent.y_pos), (target.x_pos, target.y_pos))
 
             min_dist = min(distances)
 
@@ -289,10 +288,10 @@ class System():
             if distances[constants.SOUTH] == min_dist: directions.append(constants.SOUTH)
             if distances[constants.WEST] == min_dist: directions.append(constants.WEST)
         else:
-            if target.y < agent.y: directions.append(constants.NORTH) # North
-            if target.x > agent.x: directions.append(constants.EAST) # East
-            if target.y > agent.y: directions.append(constants.SOUTH) # South
-            if target.x < agent.x: directions.append(constants.WEST) # West
+            if target.y_pos < agent.y_pos: directions.append(constants.NORTH) # North
+            if target.x_pos > agent.x_pos: directions.append(constants.EAST) # East
+            if target.y_pos > agent.y_pos: directions.append(constants.SOUTH) # South
+            if target.x_pos < agent.x_pos: directions.append(constants.WEST) # West
 
         return directions
 

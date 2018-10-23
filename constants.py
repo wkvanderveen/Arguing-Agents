@@ -15,7 +15,7 @@ WEST = 3
 INF = 9999999
 
 N_AGENTS = 20
-MAX_TIME = 1000
+MAX_TIME = 20
 
 # agent parameters
 MONEY = 500.0  # initial money of an agent
