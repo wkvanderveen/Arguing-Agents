@@ -121,7 +121,7 @@ class System():
                     continue
 
                 time_remaining = constants.MAX_TIME - self.time
-                if agent.patience*time_remaining*0.5 < agent.state.duration or \
+                if agent.patience * time_remaining * 0.5 < agent.state.duration or \
                     (agent.state.buy_or_sell == 'sell' and agent.state.other_agent.money < agent.state.price_each*agent.state.quantity) or \
                     (agent.state.buy_or_sell == 'buy' and agent.money < agent.state.price_each*agent.state.quantity) or \
                     (agent.state.buy_or_sell == 'sell' and agent.entities_info[agent.state.fruit]['quantity'] < agent.state.quantity) or \

@@ -307,10 +307,10 @@ class Agent():
 
             # Answer 'yes' if and only if sufficient quantity
             if self.entities_info[request.fruit]['quantity'] \
-                >= request.quantity:
-                response_type = 'yes'
-            else:
+                < request.quantity and request.request_type == 'buy':
                 response_type = 'no'
+            else:
+                response_type = 'yes'
 
             self.generate_response(response_type=response_type,
                                    receiver=request.sender,

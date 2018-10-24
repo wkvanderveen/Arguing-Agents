@@ -54,7 +54,7 @@ class WalkToAgentState(AgentState):
     def __init__(self, other_agent, action_to_perform,*args, **kwargs):
         super().__init__(*args, **kwargs)
         self.other_agent = other_agent
-        self.action_to_perform=action_to_perform
+        self.action_to_perform = action_to_perform
 
     def print_info(self):
         print("Agent {0} is walking toward agent {1}.".format(
