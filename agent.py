@@ -73,11 +73,11 @@ class Agent():
         """Randomly set prices for entities related to agent
         'isInterested' flag tells us that agent is interested in this entity
         """
+        max_buy = randint(constants.MIN_MAXBUY, constants.MAX_MAXBUY)
+        min_sell = randint(max_buy+1, constants.MAX_MINSELL)
         self.entities_info[entity.name] = {
-            'max_buying_price': randint(constants.MIN_MAXBUY,
-                                        constants.MAX_MAXBUY),
-            'min_selling_price': randint(constants.MIN_MINSELL,
-                                         constants.MAX_MINSELL),
+            'max_buying_price': max_buy,
+            'min_selling_price': min_sell,
             'quantity': randint(constants.MIN_QUANTITY,
                                 constants.MAX_QUANTITY),
             'isInterested': True}
@@ -98,7 +98,7 @@ class Agent():
                 if self.state.other_agent.entities_info[entity_name] \
                     ['quantity'] <= 0:
 
-                    self.state = RandomWalkState(self)
+                    self.state = agentstate.RandomWalkState(self)
                     return
 
                 my_quantity = randint(
